@@ -60,6 +60,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
            ls_child_node TYPE zst_xml_lite_child_node .
 
     lv_node_name = i_child_node->get_node_name( ).
+    i_child_node->set_parent_node( me ).
 
     ls_child_node-name = lv_node_name.
     ls_child_node-node = i_child_node.
