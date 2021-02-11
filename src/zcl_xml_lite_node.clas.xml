@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Represente a XML Node Collection</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>APPEND_CHILD</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Append a new child node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>CHILDREN</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return Children list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>CONSTRUCTOR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>CONSTRUCTOR</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>GET_NODE_NAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get XML tag name of the node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>GET_PARENT_NODE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get reference to parent node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>GET_VALUE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get node value</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>SET_NODE_NAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set XML tag name of the node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>SET_PARENT_NODE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set reference to parent node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>SET_VALUE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set node value</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>_CHILDREN</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Children node list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>_NODE_NAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>XML tag name of the node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>_PARENT_NODE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Represente a XML Node Collection</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>_VALUE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Node value</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_XML_LITE</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>A lite class to manipulate simple XML files</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>ABAP_BOOL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Standing for ABAP_BOOL (compatibility)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>CONSTRUCTOR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>CONSTRUCTOR</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>VERSION</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return ZCL_XML_LITE version</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_ABAP_FALSE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Standing for ABAP_BOOL (compatibility)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_ABAP_TRUE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Single-Character Flag</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_GET_TAG_NAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get tag name from a string</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_GT_RESULT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>List of offset for &gt;</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_GT_RESULT_LEN</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Number of line in GT Result</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_GT_TABIX</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Current index for &gt;</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_GT_TABIX_PREV</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Last index for &gt;</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_INC_GT_TABIX</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Incremen GT Tabix</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_INC_LT_TABIX</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Increment LT Tabix</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_LT_RESULT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>List of offset for &lt;</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_LT_RESULT_LEN</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Number of line in LT Result</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_LT_TABIX</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Current index for &lt;</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_LT_TABIX_PREV</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Last index for &lt;</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_PARSE_NODE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Parse node for current level</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_PARSING_NODE_LEVEL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Current level of structure level</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_ROOT_NODE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Represente a XML Node Collection</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_VERSION</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Version of library ZCL_XML_LITE</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>_XML_STRING</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Provided XML string</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
