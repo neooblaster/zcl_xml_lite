@@ -193,7 +193,8 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
            lv_match_len    TYPE        i                       .
 
 
-   CREATE OBJECT lr_regex   EXPORTING pattern = '^<\/?\s*(\S+)(.*)>$'.
+   " [https://regex101.com/r/qDnROF/latest]
+   CREATE OBJECT lr_regex   EXPORTING pattern = '^<\/?\s*(\S+[^\/\s])(.*)>$'.
    CREATE OBJECT lr_matcher EXPORTING regex   = lr_regex
                                       text    = i_tag_node .
 
@@ -229,6 +230,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
            lr_matcher           TYPE REF TO cl_abap_matcher         ,
            lv_matched           TYPE        zcl_xml_lite=>abap_bool ,
            lv_tag_name          TYPE        string                  ,
+           lv_child_tag_name    TYPE        string                  ,
            lv_has_child         TYPE        zcl_xml_lite=>abap_bool ,
            lv_opn_tag_gt_offset TYPE        i                       ,
            lv_clo_tag_lt_offset TYPE        i                       ,
@@ -265,8 +267,8 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
       " Get string as tag candidat
       lv_tag_candidat = me->_xml_string+lv_lt_offset(lv_tag_candidat_len).
 
-      " Checking if tag candidat represente XML Tag (node)
-      CREATE OBJECT lr_regexp_tag EXPORTING pattern = '^<\S+(\s+\S+=["''].*["''])?>$'.
+      " Checking if tag candidat represente XML Tag (node) [https://regex101.com/r/POUvnH/latest]
+      CREATE OBJECT lr_regexp_tag EXPORTING pattern = '^<\S+(\s+\S+=["''].*["''])?(?:\s*\/)?>$'.
       CREATE OBJECT lr_matcher    EXPORTING regex   = lr_regexp_tag
                                             text    = lv_tag_candidat.
 
@@ -276,7 +278,38 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
       IF lv_matched EQ zcl_xml_lite=>_abap_true.
 
         " -----------------------------------------------------------------------------------
-        " Is a closing tag ?
+        " Is an empty tag ? [https://regex101.com/r/Ccp82r/latest]
+        CREATE OBJECT lr_regexp_tag EXPORTING pattern = '^<\S+(\s+\S+=["''].*["''])?\s*\/>$'.
+        CREATE OBJECT lr_matcher    EXPORTING regex   = lr_regexp_tag
+                                              text    = lv_tag_candidat.
+
+        CALL METHOD lr_matcher->match RECEIVING success = lv_matched.
+
+        IF lv_matched EQ zcl_xml_lite=>_abap_true.
+
+          " We know this node has no child neither value.
+          " So we have simply to create node with it attribute
+          " and append it
+          lv_child_tag_name = me->_get_tag_name( lv_tag_candidat ).
+          lr_xml_child_node = new zcl_xml_lite_node( lv_child_tag_name ).
+          lr_xml_node->append_child( lr_xml_child_node ).
+
+          " Now, we have to check the next tag candidat :
+          "  - Is the closing tag ?
+          "  - Is a new one ? -> new level
+          lv_prev_lt_offset =  lv_lt_offset.
+          lv_prev_gt_offset =  lv_gt_offset.
+
+          me->_lt_tabix = _lt_tabix + 1.
+          me->_gt_tabix = _gt_tabix + 1.
+
+          CONTINUE.
+
+        ENDIF.
+
+
+        " -----------------------------------------------------------------------------------
+        " Is a closing tag ? [https://regex101.com/r/9QflIk/latest]
         CREATE OBJECT lr_regexp_tag EXPORTING pattern = '^<\/\S+(\s+\S+=["''].*["''])?>$'.
         CREATE OBJECT lr_matcher    EXPORTING regex   = lr_regexp_tag
                                               text    = lv_tag_candidat.
@@ -310,14 +343,13 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
 
         " -----------------------------------------------------------------------------------
-        " Else it's an openning tag ?
+        " Else it's an openning tag (last possibility) ?
         IF lv_matched EQ zcl_xml_lite=>_abap_false.
 
           " Is a another opening tag ?
           IF lv_tag_name IS NOT INITIAL.
             " Get Child Node
             lr_xml_child_node = me->_parse_node( ).
-            lr_xml_child_node->set_parent_node( lr_xml_node ).
             lr_xml_node->append_child( lr_xml_child_node ).
 
             IF lr_xml_node->children( ) IS NOT INITIAL.

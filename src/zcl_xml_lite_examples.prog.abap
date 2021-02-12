@@ -26,6 +26,11 @@ lv_xml = |<?xml version="1.0" encoding="utf-8" ?>|      &&
          |  <NODE_2>B</NODE_2>|                         &&
          |  <NODE_2>C</NODE_2>|                         &&
          |  <NODE_9>I</NODE_9>|                         &&
+         |  <NODE_10>|                                  &&
+         |    <NODE_11>eleven</NODE_11>|                &&
+         |    <NODE_12 />|                              &&
+         |    <NODE_13>thirteen</NODE_13>|              &&
+         |  </NODE_10>|                                 &&
          |</NODE_1>| .
 
 lo_xml = NEW zcl_xml_lite( lv_xml ).
