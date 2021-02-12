@@ -62,6 +62,11 @@ private section.
     returning
       value(R_NODE) type ref to ZCL_XML_LITE_NODE .
   methods _PARSE_PROCESS_INSTRUCTION .
+  methods _PARSE_ATTRIBUTES
+    importing
+      !I_TAG type STRING
+    returning
+      value(R_ATTRIBUTES) type ZT_XML_LITE_ATTRIBUTE_LIST_PAR .
 ENDCLASS.
 
 
@@ -216,28 +221,82 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   endmethod.
 
 
+  METHOD _parse_attributes.
+
+    DATA : lt_attributes      TYPE          zt_xml_lite_attribute_list_par ,
+           ls_attribute       TYPE          zst_xml_lite_attribute_parsed  ,
+           lr_regex           TYPE REF TO   cl_abap_regex                  ,
+           lr_matcher         TYPE REF TO   cl_abap_matcher                ,
+           lv_matched         TYPE          zcl_xml_lite=>abap_bool        ,
+           lt_results         TYPE          match_result_tab               ,
+           ls_result          TYPE          match_result                   ,
+           lv_att_nam_offset  TYPE          i                              ,
+           lv_att_nam_length  TYPE          i                              ,
+           lv_att_val_offset  TYPE          i                              ,
+           lv_att_val_length  TYPE          i                              ,
+           lv_att_nam         TYPE          string                         ,
+           lv_att_val         TYPE          string                         .
+
+    " Match all couple of "attr=value" with : [https://regex101.com/r/iair6w/latest]
+    " $1 = attr=value
+    " $2 = attr
+    " $3 = value
+    "
+    CREATE OBJECT lr_regex   EXPORTING pattern = '((\S+)\s*=["'']\s*(\S+)["''])' .
+    CREATE OBJECT lr_matcher EXPORTING regex   = lr_regex
+                                       text    = i_tag    .
+
+    lt_results = lr_matcher->find_all( ).
+
+    LOOP AT lt_results INTO ls_result.
+
+      " Match $2 = attribute
+      lv_att_nam_offset = ls_result-submatches[ 2 ]-offset.
+      lv_att_nam_length = ls_result-submatches[ 2 ]-length.
+
+      " Match $3 = value
+      lv_att_val_offset = ls_result-submatches[ 3 ]-offset.
+      lv_att_val_length = ls_result-submatches[ 3 ]-length.
+
+      lv_att_nam = i_tag+lv_att_nam_offset(lv_att_nam_length).
+      lv_att_val = i_tag+lv_att_val_offset(lv_att_val_length).
+
+      ls_attribute-name  = lv_att_nam.
+      ls_attribute-value = lv_att_val.
+
+      APPEND ls_attribute TO lt_attributes.
+
+    ENDLOOP.
+
+    r_attributes = lt_attributes.
+
+  ENDMETHOD.
+
+
   method _PARSE_NODE.
 
-    DATA : lr_xml_node          TYPE REF TO zcl_xml_lite_node       ,
-           lr_xml_child_node    TYPE REF TO zcl_xml_lite_node       ,
-           ls_lt_result         TYPE        match_result            ,
-           ls_gt_result         TYPE        match_result            ,
-           lv_lt_offset         TYPE        i                       ,
-           lv_gt_offset         TYPE        i                       ,
-           lv_tag_candidat_len  TYPE        i                       ,
-           lv_tag_candidat      TYPE        string                  ,
-           lr_regexp_tag        TYPE REF TO cl_abap_regex           ,
-           lr_matcher           TYPE REF TO cl_abap_matcher         ,
-           lv_matched           TYPE        zcl_xml_lite=>abap_bool ,
-           lv_tag_name          TYPE        string                  ,
-           lv_child_tag_name    TYPE        string                  ,
-           lv_has_child         TYPE        zcl_xml_lite=>abap_bool ,
-           lv_opn_tag_gt_offset TYPE        i                       ,
-           lv_clo_tag_lt_offset TYPE        i                       ,
-           lv_value_len         TYPE        i                       ,
-           lv_value             TYPE        string                  ,
-           lv_prev_lt_offset    TYPE        i                       ,
-           lv_prev_gt_offset    TYPE        i                       .
+    DATA : lr_xml_node          TYPE REF TO zcl_xml_lite_node              ,
+           lr_xml_child_node    TYPE REF TO zcl_xml_lite_node              ,
+           ls_lt_result         TYPE        match_result                   ,
+           ls_gt_result         TYPE        match_result                   ,
+           lv_lt_offset         TYPE        i                              ,
+           lv_gt_offset         TYPE        i                              ,
+           lv_tag_candidat_len  TYPE        i                              ,
+           lv_tag_candidat      TYPE        string                         ,
+           lr_regexp_tag        TYPE REF TO cl_abap_regex                  ,
+           lr_matcher           TYPE REF TO cl_abap_matcher                ,
+           lv_matched           TYPE        zcl_xml_lite=>abap_bool        ,
+           lv_tag_name          TYPE        string                         ,
+           lv_child_tag_name    TYPE        string                         ,
+           lv_has_child         TYPE        zcl_xml_lite=>abap_bool        ,
+           lv_opn_tag_gt_offset TYPE        i                              ,
+           lv_clo_tag_lt_offset TYPE        i                              ,
+           lv_value_len         TYPE        i                              ,
+           lv_value             TYPE        string                         ,
+           lv_prev_lt_offset    TYPE        i                              ,
+           lv_prev_gt_offset    TYPE        i                              ,
+           lt_attributes        TYPE        zt_xml_lite_attribute_list_par ,
+           ls_attribute         TYPE        zst_xml_lite_attribute_parsed  .
 
 
 
@@ -293,6 +352,19 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
           lv_child_tag_name = me->_get_tag_name( lv_tag_candidat ).
           lr_xml_child_node = new zcl_xml_lite_node( lv_child_tag_name ).
           lr_xml_node->append_child( lr_xml_child_node ).
+
+          " Get parsed attribute (name = value)
+          lt_attributes = me->_parse_attributes( lv_tag_candidat ).
+
+          " Create Attribute instance and append it
+          LOOP AT lt_attributes INTO ls_attribute.
+
+            lr_xml_child_node->set_attribute(
+              i_name  = ls_attribute-name
+              i_value = ls_attribute-value
+            ).
+
+          ENDLOOP.
 
           " Now, we have to check the next tag candidat :
           "  - Is the closing tag ?
@@ -361,6 +433,19 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
             lv_tag_name = me->_get_tag_name( lv_tag_candidat ).
             lr_xml_node->set_node_name( lv_tag_name ).
 
+            " Get parsed attribute (name = value)
+            lt_attributes = me->_parse_attributes( lv_tag_candidat ).
+
+            " Create Attribute instance and append it
+            LOOP AT lt_attributes INTO ls_attribute.
+
+              lr_xml_node->set_attribute(
+                i_name  = ls_attribute-name
+                i_value = ls_attribute-value
+              ).
+
+            ENDLOOP.
+
           ENDIF.
 
           " Now, we have to check the next tag candidat :
@@ -393,72 +478,77 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
   method _PARSE_PROCESS_INSTRUCTION.
 
-    DATA :
-*           lr_xml_node          TYPE REF TO zcl_xml_lite_node       ,
-*           lr_xml_child_node    TYPE REF TO zcl_xml_lite_node       ,
-           ls_lt_result              TYPE        match_result            ,
-           ls_gt_result              TYPE        match_result            ,
-           lv_lt_offset              TYPE        i                       ,
-           lv_gt_offset              TYPE        i                       ,
-           lv_proc_ins_candidat_len  TYPE        i                       ,
-           lv_proc_ins_candidat      TYPE        string                  ,
-           lr_regexp_tag             TYPE REF TO cl_abap_regex           ,
-           lr_matcher                TYPE REF TO cl_abap_matcher         ,
-           lv_matched                TYPE        zcl_xml_lite=>abap_bool
-*           lv_tag_name          TYPE        string                  ,
-*           lv_has_child         TYPE        zcl_xml_lite=>abap_bool ,
-*           lv_opn_tag_gt_offset TYPE        i                       ,
-*           lv_clo_tag_lt_offset TYPE        i                       ,
-*           lv_value_len         TYPE        i                       ,
-*           lv_value             TYPE        string                  ,
-*           lv_prev_lt_offset    TYPE        i                       ,
-*           lv_prev_gt_offset    TYPE        i
-           .
+    DATA : ls_lt_result              TYPE        match_result                   ,
+           ls_gt_result              TYPE        match_result                   ,
+           lv_lt_offset              TYPE        i                              ,
+           lv_gt_offset              TYPE        i                              ,
+           lv_proc_ins_candidat_len  TYPE        i                              ,
+           lv_proc_ins_candidat      TYPE        string                         ,
+           lr_regexp_tag             TYPE REF TO cl_abap_regex                  ,
+           lr_matcher                TYPE REF TO cl_abap_matcher                ,
+           lv_matched                TYPE        zcl_xml_lite=>abap_bool        ,
+           lt_attributes             TYPE        zt_xml_lite_attribute_list_par ,
+           ls_attribute              TYPE        zst_xml_lite_attribute_parsed  ,
+           lr_attribute              TYPE REF TO zcl_xml_lite_attribute         ,
+           ls_attribute_entry        TYPE        zst_xml_lite_attribute         .
 
 
-    "
-*    DO.
-*      " Get offset for both < and >
-*      READ TABLE me->_lt_result INTO ls_lt_result INDEX me->_lt_tabix.
-*      READ TABLE me->_gt_result INTO ls_gt_result INDEX me->_lt_tabix.
-*
-*      " Making Proc Instruction candidat
-*      lv_lt_offset = ls_lt_result-offset.
-*      lv_gt_offset = ls_gt_result-offset.
-*
-*      lv_proc_ins_candidat_len = lv_gt_offset - lv_lt_offset + 1. " +1 to include > char
-*
-*      " Get string as Process Instruction candidat
-*      lv_proc_ins_candidat = me->_xml_string+lv_lt_offset(lv_proc_ins_candidat_len).
-*
-*      " Checking if tag candidat represente XML Tag (node)
-*      CREATE OBJECT lr_regexp_tag EXPORTING pattern = '^<?(.*)?>'.
-*      CREATE OBJECT lr_matcher    EXPORTING regex   = lr_regexp_tag
-*                                            text    = lv_proc_ins_candidat.
-*
-*      CALL METHOD lr_matcher->match RECEIVING success = lv_matched.
-*
-*
-*      IF lv_matched EQ zcl_xml_lite=>_abap_true.
-*
-*
-*      ELSE.
-*        " We check if we get something which looks like to a tag
-*        CREATE OBJECT lr_regexp_tag EXPORTING pattern = '^<\S+(\s+\S+=["''].*["''])?>$'.
-*        CREATE OBJECT lr_matcher    EXPORTING regex   = lr_regexp_tag
-*                                              text    = lv_proc_ins_candidat.
-*
-*        CALL METHOD lr_matcher->match RECEIVING success = lv_matched.
-*
-*        IF lv_matched EQ zcl_xml_lite=>_abap_true.
-*          EXIT.
-*
-*        ELSE.
-*        ENDIF.
-*
-*      ENDIF.
-*
-*    ENDDO.
+    DO.
+      " Get offset for both < and >
+      READ TABLE me->_lt_result INTO ls_lt_result INDEX me->_lt_tabix.
+      READ TABLE me->_gt_result INTO ls_gt_result INDEX me->_lt_tabix.
+
+      " Making Proc Instruction candidat
+      lv_lt_offset = ls_lt_result-offset.
+      lv_gt_offset = ls_gt_result-offset.
+
+      lv_proc_ins_candidat_len = lv_gt_offset - lv_lt_offset + 1. " +1 to include > char
+
+      " Get string as Process Instruction candidat
+      lv_proc_ins_candidat = me->_xml_string+lv_lt_offset(lv_proc_ins_candidat_len).
+
+      " Checking if tag candidat represente XML Tag (node) [https://regex101.com/r/Zyh27B/latest]
+      CREATE OBJECT lr_regexp_tag EXPORTING pattern = '^<\?\s*(?:xml)?(.*)\?>'.
+      CREATE OBJECT lr_matcher    EXPORTING regex   = lr_regexp_tag
+                                            text    = lv_proc_ins_candidat.
+
+      CALL METHOD lr_matcher->match RECEIVING success = lv_matched.
+
+
+      IF lv_matched EQ zcl_xml_lite=>_abap_true.
+
+        " Get parsed attribute (name = value)
+        lt_attributes = me->_parse_attributes( lv_proc_ins_candidat ).
+
+        " Create Attribute instance and append it
+        LOOP AT lt_attributes INTO ls_attribute.
+
+          CLEAR ls_attribute_entry.
+
+          lr_attribute = new zcl_xml_lite_attribute(
+            i_name  = ls_attribute-name
+            i_value = ls_attribute-value
+          ).
+
+          ls_attribute_entry-name      = ls_attribute-name.
+          ls_attribute_entry-attribute = lr_attribute.
+
+          APPEND ls_attribute_entry TO me->_attributes.
+
+        ENDLOOP.
+
+        me->_lt_tabix = _lt_tabix + 1.
+        me->_gt_tabix = _gt_tabix + 1.
+
+        EXIT.
+
+      ELSE.
+
+        EXIT.
+
+      ENDIF.
+
+    ENDDO.
 
   endmethod.
 ENDCLASS.

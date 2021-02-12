@@ -28,7 +28,7 @@ lv_xml = |<?xml version="1.0" encoding="utf-8" ?>|      &&
          |  <NODE_9>I</NODE_9>|                         &&
          |  <NODE_10>|                                  &&
          |    <NODE_11>eleven</NODE_11>|                &&
-         |    <NODE_12 />|                              &&
+         |    <NODE_12 attr="at12"/>|                   &&
          |    <NODE_13>thirteen</NODE_13>|              &&
          |  </NODE_10>|                                 &&
          |</NODE_1>| .
@@ -68,11 +68,11 @@ lr_root->append_child( new_node ).
 LOOP AT lo_xml->root_node( )->children( ) INTO DATA(children_l1).
   DATA(child_l1) = children_l1-node.
 
-  WRITE : / child_l1->get_node_name( ).
+  WRITE : / '- ' && child_l1->get_node_name( ).
 
   LOOP AT child_l1->children( ) INTO DATA(children_l2).
     DATA(child_l2) = children_l2-node.
-    WRITE : / '---' && child_l2->get_node_name( ).
+    WRITE : / '  - ' && child_l2->get_node_name( ).
   ENDLOOP.
 ENDLOOP.
 

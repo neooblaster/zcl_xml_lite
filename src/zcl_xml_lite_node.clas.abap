@@ -28,6 +28,24 @@ public section.
   methods GET_NODE_NAME
     returning
       value(R_NODE_NAME) type STRING .
+  methods SET_ATTRIBUTE
+    importing
+      !I_NAME type STRING
+      !I_VALUE type STRING .
+  methods GET_ATTRIBUTE
+    importing
+      !I_NAME type STRING
+    returning
+      value(R_ATTRIBUTE) type ref to ZCL_XML_LITE_ATTRIBUTE .
+  methods GET_ATTRIBUTE_VALUE
+    importing
+      !I_NAME type STRING
+    returning
+      value(R_VALUE) type STRING .
+  methods REMOVE_ATTRIBUTE .
+  methods ATTRIBUTES
+    returning
+      value(R_ATTRIBUTES) type ZT_XML_LITE_ATTRIBUTE_LIST .
   methods SET_VALUE
     importing
       !I_VALUE type STRING .
@@ -45,6 +63,7 @@ private section.
 
   data _PARENT_NODE type ref to ZCL_XML_LITE_NODE .
   data _NODE_NAME type STRING .
+  data _ATTRIBUTES type ZT_XML_LITE_ATTRIBUTE_LIST .
   data _VALUE type STRING .
   data _CHILDREN type ZT_XML_LITE_CHILD_LIST .
 ENDCLASS.
@@ -70,6 +89,13 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   ENDMETHOD.
 
 
+  method ATTRIBUTES.
+
+    r_attributes = me->_attributes.
+
+  endmethod.
+
+
   method CHILDREN.
 
     r_child_list = me->_children.
@@ -90,6 +116,14 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   ENDMETHOD.
 
 
+  method GET_ATTRIBUTE.
+  endmethod.
+
+
+  method GET_ATTRIBUTE_VALUE.
+  endmethod.
+
+
   METHOD get_node_name.
 
     r_node_name = me->_node_name.
@@ -107,6 +141,36 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   method GET_VALUE.
 
     r_value = me->_value.
+
+  endmethod.
+
+
+  method REMOVE_ATTRIBUTE.
+  endmethod.
+
+
+  method SET_ATTRIBUTE.
+
+    DATA : ls_attribute  TYPE        zst_xml_lite_attribute  ,
+           lr_attribute  TYPE REF TO zcl_xml_lite_attribute .
+
+
+    lr_attribute = new zcl_xml_lite_attribute(
+      i_name  = i_name
+      i_value = i_value
+    ).
+    ls_attribute-name      = i_name.
+    ls_attribute-attribute = lr_attribute .
+
+    READ TABLE me->_attributes TRANSPORTING NO FIELDS WITH TABLE KEY name = i_name.
+
+    IF sy-subrc EQ 0.
+      MODIFY me->_attributes FROM ls_attribute INDEX sy-tabix.
+
+    ELSE.
+      APPEND ls_attribute TO me->_attributes.
+
+    ENDIF.
 
   endmethod.
 
