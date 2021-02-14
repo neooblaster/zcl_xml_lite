@@ -11,7 +11,7 @@ DATA: lo_xml   TYPE REF TO zcl_xml_lite ,
 
 lv_xml = |<?xml version="1.0" encoding="utf-8" ?>|      &&
          |<NODE_1 lvl="1.0">|                           &&
-*lv_xml = |<NODE_1 lvl="1.0">|                           &&
+**lv_xml = |<NODE_1 lvl="1.0">|                           &&
          |  <NODE_2 lvl="2.0">|                         &&
          |    <NODE_3 lvl="3.1">value_3.1</NODE_3>|     &&
          |    <NODE_4 lvl="3.2">|                       &&
@@ -33,9 +33,11 @@ lv_xml = |<?xml version="1.0" encoding="utf-8" ?>|      &&
          |  </NODE_10>|                                 &&
          |</NODE_1>| .
 
-*lv_xml = |<?xml version="1.0" encoding="utf-8" ?>|      &&
-*         |<NODE_1 lvl="1.0">|                           &&
-*         |  <NODE_12 attr="at12"/>|                   &&
+*lv_xml = |<?xml version="1.0" encoding="utf-8" ?>|         &&
+*         |<NODE_1 lvl="1.0">|                              &&
+*         |  <NODE_12 attr="at12"/>|                        &&
+*         |  <NODE_13 attr="at12">value_node_13</NODE_13>|  &&
+*         |  <NODE_13>value_node_13</NODE_13>|              &&
 *         |</NODE_1>| .
 
 lo_xml = NEW zcl_xml_lite( lv_xml ).
@@ -81,12 +83,19 @@ lr_root   = lo_xml->root_node( ).     " << XML Root node
 *  ENDLOOP.
 *ENDLOOP.
 
-*lo_xml->prettify( 'X' ).
+lo_xml->prettify( 'X' ).
+*lo_xml->set_eol( i_ux_eol = 'X' ).
+*lo_xml->set_eol( i_nt_eol = 'X' ).
+*lo_xml->set_eol( i_nt_eol = 'X' i_ux_eol = 'X' ).
+*lo_xml->prettify( ' ' ).
 *lo_xml->use_space( 4 ).
 *lo_xml->use_tab( ).
 
-write : / lo_xml->stringify( ).
+*write : / lo_xml->stringify( ).
 
-
+cl_abap_browser=>show_xml(
+  lo_xml->stringify( )
+"  lv_xml
+).
 
 IF 1 = 2. ENDIF.

@@ -289,8 +289,6 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
     me->_render_process_instruction( ).
     me->_render_node( me->_root_node ).
 
-    CONDENSE me->_xml_string.
-
     r_xml_str = me->_xml_string.
 
   ENDMETHOD.
@@ -390,7 +388,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
     IF me->_xml_prettify EQ 'X'.
 
       IF me->_xml_use_space EQ 'X'.
-        lv_indent_char = repeat( val = ' ' occ = me->_xml_tab_size ).
+        lv_indent_char = repeat( val = | | occ = me->_xml_tab_size ). " ALT+255
       ELSE.
         lv_indent_char = cl_abap_char_utilities=>horizontal_tab.
       ENDIF.
@@ -754,6 +752,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
     DATA : lv_node_opening TYPE string                  ,
            lv_node_closing TYPE string                  ,
+           lv_node_odd     TYPE string                  ,
            lv_node_name    TYPE string                  ,
            lv_attribute    TYPE string                  ,
            lv_attributes   TYPE string                  ,
@@ -761,13 +760,15 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
            lv_eol          TYPE string                  ,
            lv_indent       TYPE string                  ,
            ls_child_node   TYPE zst_xml_lite_child_node ,
-           lv_level        TYPE i                       .
+           lv_level        TYPE i                       ,
+           lv_node_val     TYPE string                  .
 
 
     lv_eol    = me->_eol( ).
     lv_indent = me->_indent( i_level ).
 
     lv_node_name = i_xml_node->get_node_name( ).
+    lv_node_val  = i_xml_node->get_value( ).
 
     LOOP AT i_xml_node->attributes( ) INTO ls_attribute .
 
@@ -777,30 +778,52 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
     ENDLOOP.
 
-
-    IF i_xml_node->get_value( ) IS INITIAL AND i_xml_node->length( ) EQ 0.
+    " Empty tag (<node attr="" />)
+    IF (
+         i_xml_node->get_value( ) IS INITIAL
+      OR i_xml_node->get_value( ) EQ '' )
+      AND i_xml_node->length( ) EQ 0.
       " Render Odd tag
       CONCATENATE lv_node_name lv_attribute INTO lv_node_opening SEPARATED BY space.
       CONCATENATE me->_xml_string lv_indent '<' lv_node_opening ' />' lv_eol INTO me->_xml_string.
 
+
+*   " Openning & Closing Tags :
     ELSE.
-      " Render Opening tag
-      CONCATENATE lv_node_name lv_attribute INTO lv_node_opening SEPARATED BY space.
-      CONCATENATE me->_xml_string lv_indent '<' lv_node_opening '>' lv_eol INTO me->_xml_string.
+      " With children
+      "   <NODE>
+      "     <CHILD></CHILD>
+      "   </NODE>
+      IF i_xml_node->length( ) > 0.
+        " Render Opening tag
+        CONCATENATE lv_node_name lv_attribute INTO lv_node_opening SEPARATED BY space.
+        CONCATENATE me->_xml_string lv_indent '<' lv_node_opening '>' lv_eol INTO me->_xml_string.
 
-      " Render Children
-      LOOP AT i_xml_node->children( ) INTO ls_child_node.
-        lv_level = i_level + 1.
+        " Render Children
+        LOOP AT i_xml_node->children( ) INTO ls_child_node.
+          lv_level = i_level + 1.
 
-        me->_render_node(
-          i_xml_node = ls_child_node-node
-          i_level    = lv_level
-        ).
-      ENDLOOP.
+          me->_render_node(
+            i_xml_node = ls_child_node-node
+            i_level    = lv_level
+          ).
+        ENDLOOP.
 
-      " Render Closing Tag
-      CONCATENATE lv_node_name '/' INTO lv_node_closing SEPARATED BY space.
-      CONCATENATE me->_xml_string lv_indent '<' lv_node_closing '>' lv_eol INTO me->_xml_string.
+        " Render Closing Tag
+        CONCATENATE '/' lv_node_name INTO lv_node_closing.
+        CONCATENATE me->_xml_string lv_indent '<' lv_node_closing '>' lv_eol INTO me->_xml_string.
+
+
+*     " Only value :
+*     "   <NODE>value</NODE>
+      ELSE.
+        CONCATENATE lv_node_name lv_attribute INTO lv_node_odd SEPARATED BY space.
+        CONCATENATE '<' lv_node_odd '>' lv_node_val '</' lv_node_name '>' INTO lv_node_odd.
+        "lv_node_odd = |<| && lv_node_odd && |>| && lv_node_val && |'</| && lv_node_name && |>|.
+        CONCATENATE me->_xml_string lv_indent lv_node_odd lv_eol INTO me->_xml_string.
+
+      ENDIF.
+
     ENDIF.
 
   ENDMETHOD.
@@ -822,7 +845,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
     ENDLOOP.
 
     lv_eol = me->_eol( ).
-    CONCATENATE '<?xml' lv_attributes ' ?>' lv_eol INTO me->_xml_string.
+    CONCATENATE '<?xml' lv_attributes ' ?>' lv_eol INTO me->_xml_string.
 
   endmethod.
 ENDCLASS.
