@@ -33,6 +33,11 @@ lv_xml = |<?xml version="1.0" encoding="utf-8" ?>|      &&
          |  </NODE_10>|                                 &&
          |</NODE_1>| .
 
+*lv_xml = |<?xml version="1.0" encoding="utf-8" ?>|      &&
+*         |<NODE_1 lvl="1.0">|                           &&
+*         |  <NODE_12 attr="at12"/>|                   &&
+*         |</NODE_1>| .
+
 lo_xml = NEW zcl_xml_lite( lv_xml ).
 
 
@@ -58,23 +63,29 @@ lr_root   = lo_xml->root_node( ).     " << XML Root node
 
 " Creating Node
 " -------------------------
-DATA(new_node) = new zcl_xml_lite_node( 'MY_NEW_NODE' ).
-lr_root->append_child( new_node ).
+*DATA(new_node) = new zcl_xml_lite_node( 'MY_NEW_NODE' ).
+*lr_root->append_child( new_node ).
 
 
 
 " Looping on node list
 " ------------------------
-LOOP AT lo_xml->root_node( )->children( ) INTO DATA(children_l1).
-  DATA(child_l1) = children_l1-node.
+*LOOP AT lo_xml->root_node( )->children( ) INTO DATA(children_l1).
+*  DATA(child_l1) = children_l1-node.
+*
+*  WRITE : / '- ' && child_l1->get_node_name( ).
+*
+*  LOOP AT child_l1->children( ) INTO DATA(children_l2).
+*    DATA(child_l2) = children_l2-node.
+*    WRITE : / '  - ' && child_l2->get_node_name( ).
+*  ENDLOOP.
+*ENDLOOP.
 
-  WRITE : / '- ' && child_l1->get_node_name( ).
+*lo_xml->prettify( 'X' ).
+*lo_xml->use_space( 4 ).
+*lo_xml->use_tab( ).
 
-  LOOP AT child_l1->children( ) INTO DATA(children_l2).
-    DATA(child_l2) = children_l2-node.
-    WRITE : / '  - ' && child_l2->get_node_name( ).
-  ENDLOOP.
-ENDLOOP.
+write : / lo_xml->stringify( ).
 
 
 

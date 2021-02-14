@@ -58,6 +58,9 @@ public section.
   methods CHILDREN
     returning
       value(R_CHILD_LIST) type ZT_XML_LITE_CHILD_LIST .
+  methods LENGTH
+    returning
+      value(R_LENGTH) type I .
 protected section.
 private section.
 
@@ -66,6 +69,7 @@ private section.
   data _ATTRIBUTES type ZT_XML_LITE_ATTRIBUTE_LIST .
   data _VALUE type STRING .
   data _CHILDREN type ZT_XML_LITE_CHILD_LIST .
+  data _CHILDREN_LEN type I .
 ENDCLASS.
 
 
@@ -85,6 +89,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
     ls_child_node-node = i_child_node.
 
     APPEND ls_child_node TO me->_children.
+    me->_children_len = me->_children_len + 1.
 
   ENDMETHOD.
 
@@ -141,6 +146,13 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   method GET_VALUE.
 
     r_value = me->_value.
+
+  endmethod.
+
+
+  method LENGTH.
+
+    r_length = me->_children_len.
 
   endmethod.
 
