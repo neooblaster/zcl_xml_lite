@@ -827,7 +827,13 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
       lv_attribute = me->_render_attribute( ls_attribute-attribute ).
 
-      CONCATENATE lv_attributes lv_attribute INTO lv_attributes SEPARATED BY space.
+      " Preveting adding space at begining.
+      IF lv_attributes IS INITIAL.
+        lv_attributes = lv_attribute.
+      ELSE.
+        CONCATENATE lv_attributes lv_attribute INTO lv_attributes SEPARATED BY space.
+      ENDIF.
+
 
     ENDLOOP.
 
@@ -837,7 +843,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
       OR i_xml_node->get_value( ) EQ '' )
       AND i_xml_node->length( ) EQ 0.
       " Render Odd tag
-      CONCATENATE lv_node_name lv_attribute INTO lv_node_opening SEPARATED BY space.
+      CONCATENATE lv_node_name lv_attributes INTO lv_node_opening SEPARATED BY space.
       CONCATENATE me->_xml_string lv_indent '<' lv_node_opening ' />' lv_eol INTO me->_xml_string.
 
 
@@ -849,7 +855,13 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
       "   </NODE>
       IF i_xml_node->length( ) > 0.
         " Render Opening tag
-        CONCATENATE lv_node_name lv_attribute INTO lv_node_opening SEPARATED BY space.
+
+        IF lv_attributes IS NOT INITIAL. " Preventing Blank Space between tag name and > char
+          CONCATENATE lv_node_name lv_attributes INTO lv_node_opening SEPARATED BY space.
+        ELSE.
+          lv_node_opening = lv_node_name.
+        ENDIF.
+
         CONCATENATE me->_xml_string lv_indent '<' lv_node_opening '>' lv_eol INTO me->_xml_string.
 
         " Render Children
@@ -870,7 +882,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 *     " Only value :
 *     "   <NODE>value</NODE>
       ELSE.
-        CONCATENATE lv_node_name lv_attribute INTO lv_node_odd SEPARATED BY space.
+        CONCATENATE lv_node_name lv_attributes INTO lv_node_odd SEPARATED BY space.
         CONCATENATE '<' lv_node_odd '>' lv_node_val '</' lv_node_name '>' INTO lv_node_odd.
         "lv_node_odd = |<| && lv_node_odd && |>| && lv_node_val && |'</| && lv_node_name && |>|.
         CONCATENATE me->_xml_string lv_indent lv_node_odd lv_eol INTO me->_xml_string.

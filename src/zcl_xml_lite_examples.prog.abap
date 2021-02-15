@@ -252,16 +252,73 @@ ENDIF.
 DATA(hdl_nsib10) = lr_root1->next_sibling( lr_root1->child( ) )->get_node_name( ).    " CHILD_1_5                       " OK
 ">>> Check handle
 
-
-
-
-
-
 " --- Display
 cl_abap_browser=>show_xml(
   lr_xml2->stringify( )
 ).
 
+
+
+
+
+
+DATA(lr_xml3) = new zcl_xml_lite( ).
+DATA(lr_View)  = new zcl_xml_lite_node( 'mvc:View' ).
+lr_View->set_attribute(
+  i_name  = 'controllerName'
+  i_value = 'sap.m.sample.ActionSheet.controller.ActionSheet'
+).
+lr_View->set_attribute(
+  i_name  = 'xmlns:mvc'
+  i_value = 'sap.ui.core.mvc'
+).
+lr_View->set_attribute(
+  i_name  = 'xmlns:core'
+  i_value = 'sap.ui.core'
+).
+lr_View->set_attribute(
+  i_name  = 'xmlns'
+  i_value = 'sap.m'
+).
+DATA(lr_Button)  = new zcl_xml_lite_node( 'Button' ).
+lr_Button->set_attribute(
+  i_name  = 'text'
+  i_value = 'Open Action Sheet'
+).
+lr_Button->set_attribute(
+  i_name  = 'class'
+  i_value = 'sapUiSmallMargin'
+).
+lr_Button->set_attribute(
+  i_name  = 'press'
+  i_value = '.onButtonPress'
+).
+lr_Button->set_attribute(
+  i_name  = 'ariaHasPopup'
+  i_value = 'Menu'
+).
+DATA(lr_dependents) = new zcl_xml_lite_node( 'dependents' ).
+DATA(lr_Fragment)   = new zcl_xml_lite_node( 'core:Fragment' ).
+lr_Fragment->set_attribute(
+  i_name  = 'fragmentName'
+  i_value = 'sap.m.sample.ActionSheet.view.ActionSheet'
+).
+lr_Fragment->set_attribute(
+  i_name  = 'type'
+  i_value = 'XML'
+).
+
+lr_xml3->set_root_node( lr_View ).
+lr_View->append_child( lr_Button ).
+lr_Button->append_child( lr_dependents ).
+lr_dependents->append_child( lr_Fragment ).
+
+
+" --- Display
+DATA(lv_xml_view) = lr_xml3->stringify( ).
+cl_abap_browser=>show_xml(
+  lr_xml3->stringify( )
+).
 
 
 
