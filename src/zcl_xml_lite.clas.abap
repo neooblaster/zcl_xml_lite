@@ -7,7 +7,7 @@ public section.
 
   methods CONSTRUCTOR
     importing
-      value(I_XML_STRING) type STRING .
+      value(I_XML_STRING) type STRING optional .
   methods ATTRIBUTE
     importing
       !I_ATTRIBUTE_NAME type ZDT_XML_LITE_ATTRIBUTE_NAME
@@ -16,6 +16,10 @@ public section.
   methods ATTRIBUTES
     returning
       value(R_ATTRIBUTES) type ZT_XML_LITE_ATTRIBUTE_LIST .
+  methods SET_ATTRIBUTE
+    importing
+      !I_NAME type STRING
+      !I_VALUE type STRING .
   methods ROOT_NODE
     returning
       value(R_ROOT_NODE) type ref to ZCL_XML_LITE_NODE .
@@ -29,6 +33,9 @@ public section.
       value(I_NODE_NAME) type ZDT_XML_LITE_NODE_NAME optional
     returning
       value(R_NODES) type ZT_XML_LITE_CHILD_LIST .
+  methods SET_ROOT_NODE
+    importing
+      !I_ROOT_NODE type ref to ZCL_XML_LITE_NODE .
   methods PRETTIFY
     importing
       !I_PRETTIFY type CHAR1 optional .
@@ -159,53 +166,63 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
            lv_filsys    TYPE FILESYS  .
 
 
-    " Storing provided XML in attribute for sharing handling
-    me->_xml_string = i_xml_string.
+    IF i_xml_string IS SUPPLIED.
+      " Storing provided XML in attribute for sharing handling
+      me->_xml_string = i_xml_string.
 
 
-    " Search current EOL
-    FIND ALL OCCURRENCES OF |\r\n| IN i_xml_string MATCH COUNT lv_eol_count.
-
-    IF lv_eol_count > 0.
-      me->_XML_EOL = 'NT'.
-    ELSE.
-      FIND ALL OCCURRENCES OF |\n| IN i_xml_string MATCH COUNT lv_eol_count.
+      " Search current EOL
+      FIND ALL OCCURRENCES OF |\r\n| IN i_xml_string MATCH COUNT lv_eol_count.
 
       IF lv_eol_count > 0.
-        me->_XML_EOL = 'UX'.
+        me->_XML_EOL = 'NT'.
       ELSE.
-        SELECT SINGLE filesys FROM opsystem INTO lv_filsys WHERE opsys = sy-opsys.
+        FIND ALL OCCURRENCES OF |\n| IN i_xml_string MATCH COUNT lv_eol_count.
 
-        CASE lv_filsys .
-          WHEN 'UNIX'.
-            me->_XML_EOL = 'UX'.
-          WHEN 'WINDOWS NT'.
-            me->_XML_EOL = 'NT'.
-          WHEN OTHERS.
-            me->_XML_EOL = 'NT'.
-        ENDCASE.
+        IF lv_eol_count > 0.
+          me->_XML_EOL = 'UX'.
+        ELSE.
+          SELECT SINGLE filesys FROM opsystem INTO lv_filsys WHERE opsys = sy-opsys.
 
+          CASE lv_filsys .
+            WHEN 'UNIX'.
+              me->_XML_EOL = 'UX'.
+            WHEN 'WINDOWS NT'.
+              me->_XML_EOL = 'NT'.
+            WHEN OTHERS.
+              me->_XML_EOL = 'NT'.
+          ENDCASE.
+
+        ENDIF.
       ENDIF.
+
+
+      " Remove New Line char (Unix & NT)
+      REPLACE ALL OCCURRENCES OF |\r| IN i_xml_string WITH space.
+      REPLACE ALL OCCURRENCES OF |\n| IN i_xml_string WITH space.
+
+      " Working with LT & GT sign
+      FIND ALL OCCURRENCES OF '<' IN i_xml_string RESULTS me->_lt_result.
+      FIND ALL OCCURRENCES OF '>' IN i_xml_string RESULTS me->_gt_result.
+
+      " Initialization of processing tabix
+      DESCRIBE TABLE me->_lt_result LINES me->_lt_result_len.
+      DESCRIBE TABLE me->_gt_result LINES me->_gt_result_len.
+
+      " Checking for "Processing Instructions" (src: https://www.w3.org/TR/xml/#sec-pi)
+      me->_parse_process_instruction( ).
+
+      " Start parsing XML to build all node
+      me->_root_node = me->_parse_node( ).
+
+
+    ELSE.
+      me->set_attribute(
+        i_name  = 'version'
+        i_value = '1.0'
+      ).
+
     ENDIF.
-
-
-    " Remove New Line char (Unix & NT)
-    REPLACE ALL OCCURRENCES OF |\r| IN i_xml_string WITH space.
-    REPLACE ALL OCCURRENCES OF |\n| IN i_xml_string WITH space.
-
-    " Working with LT & GT sign
-    FIND ALL OCCURRENCES OF '<' IN i_xml_string RESULTS me->_lt_result.
-    FIND ALL OCCURRENCES OF '>' IN i_xml_string RESULTS me->_gt_result.
-
-    " Initialization of processing tabix
-    DESCRIBE TABLE me->_lt_result LINES me->_lt_result_len.
-    DESCRIBE TABLE me->_gt_result LINES me->_gt_result_len.
-
-    " Checking for "Processing Instructions" (src: https://www.w3.org/TR/xml/#sec-pi)
-    me->_parse_process_instruction( ).
-
-    " Start parsing XML to build all node
-    me->_root_node = me->_parse_node( ).
 
     " Once instanciated, removing XML String to free memory
     CLEAR   : me->_xml_string .
@@ -269,6 +286,32 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   endmethod.
 
 
+  METHOD set_attribute.
+
+    DATA : ls_attribute  TYPE        zst_xml_lite_attribute  ,
+           lr_attribute  TYPE REF TO zcl_xml_lite_attribute .
+
+
+    lr_attribute = NEW zcl_xml_lite_attribute(
+      i_name  = i_name
+      i_value = i_value
+    ).
+    ls_attribute-name      = i_name.
+    ls_attribute-attribute = lr_attribute .
+
+    READ TABLE me->_attributes TRANSPORTING NO FIELDS WITH TABLE KEY name = i_name.
+
+    IF sy-subrc EQ 0.
+      MODIFY me->_attributes FROM ls_attribute INDEX sy-tabix.
+
+    ELSE.
+      APPEND ls_attribute TO me->_attributes.
+
+    ENDIF.
+
+  ENDMETHOD.
+
+
   METHOD set_eol.
 
     IF i_nt_eol IS SUPPLIED AND i_ux_eol IS SUPPLIED.
@@ -284,10 +327,20 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   ENDMETHOD.
 
 
+  method SET_ROOT_NODE.
+
+    me->_root_node = i_root_node.
+
+  endmethod.
+
+
   METHOD stringify.
 
     me->_render_process_instruction( ).
-    me->_render_node( me->_root_node ).
+
+    IF me->_root_node IS NOT INITIAL.
+      me->_render_node( me->_root_node ).
+    ENDIF.
 
     r_xml_str = me->_xml_string.
 

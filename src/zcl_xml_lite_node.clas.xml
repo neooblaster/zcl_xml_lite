@@ -26,9 +26,27 @@
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>CHILD</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return current child node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
      <CMPNAME>CHILDREN</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Return Children list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>CLONE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return a full copy of this node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>CLONE_CHILD</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return a full copy of child</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
@@ -68,15 +86,81 @@
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>INSERT_AFTER</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Insert the new node after specified node or current handled</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>INSERT_BEFORE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Insert the new node before specified node or current handled</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
      <CMPNAME>LENGTH</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Return the number of children</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>NEXT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return the next child</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>NEXT_SIBLING</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return the next sibling of specified node or current handle</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>PARENT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return the parent node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>PREVIOUS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return the previous child</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>PREVIOUS_SIBLING</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return the previous sibling of specified node or curnt. hdl.</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>REMOVE_AFTER</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Remove child after provided child node or current handled</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
      <CMPNAME>REMOVE_ATTRIBUTE</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Delete an attribute</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>REMOVE_BEFORE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Remove child before provided child node or current handled</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>REMOVE_CHILD</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Remove child node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>RESET</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return to the first child</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
@@ -116,9 +200,21 @@
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>_CHILDREN_IDX</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Current handled children</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
      <CMPNAME>_CHILDREN_LEN</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Number of children</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
+     <CMPNAME>_GET_INDEX</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Return the right child node index</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE_NODE</CLSNAME>
