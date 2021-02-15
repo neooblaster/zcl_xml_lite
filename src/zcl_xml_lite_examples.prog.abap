@@ -183,8 +183,8 @@ DATA(hdl_psib4) = lr_root1->previous_sibling( lr_root1->child( ) )->get_node_nam
 DATA(hdl_nsib4) = lr_root1->next_sibling( lr_root1->child( ) )->get_node_name( ).     " CHILD_1_3                       " OK
 ">>> Check handle
 
-lr_root1->insert_after(               " Insert 7th child after 6th           " 1 / 4 / 6 / 7 / 5 / [2] / 3              " OK
-  i_new_node   = lr_chld7                                               " idx: 1   2   3   4   5    6    7
+lr_root1->insert_after(               " Insert 7th child after 6th                    " 1 / 4 / 6 / 7 / 5 / [2] / 3     " OK
+  i_new_node   = lr_chld7                                                        " idx: 1   2   3   4   5    6    7
   i_index_node = 3
 ).                 " idx 5 --> 6
 
@@ -194,10 +194,77 @@ DATA(hdl_psib5) = lr_root1->previous_sibling( lr_root1->child( ) )->get_node_nam
 DATA(hdl_nsib5) = lr_root1->next_sibling( lr_root1->child( ) )->get_node_name( ).     " CHILD_1_3                       " OK
 ">>> Check handle
 
+
 " --- Display
 cl_abap_browser=>show_xml(
   lr_xml2->stringify( )
 ).
+
+
+" Removing
+lr_root1->remove_child( ).                                                            " 1 / 4 / 6 / 7 / [5] / 3         " OK
+
+"<<< Check handle
+DATA(hdl_name6) = lr_root1->child( )->get_node_name( ).                               " CHILD_1_5                       " OK
+DATA(hdl_psib6) = lr_root1->previous_sibling( lr_root1->child( ) )->get_node_name( ). " CHILD_1_7                       " OK
+DATA(hdl_nsib6) = lr_root1->next_sibling( lr_root1->child( ) )->get_node_name( ).     " CHILD_1_3                       " OK
+">>> Check handle
+
+lr_root1->remove_child( i_child_node_index = 4 ).                                     " 1 / 4 / 6 / [5] / 3            " OK
+
+"<<< Check handle
+DATA(hdl_name7) = lr_root1->child( )->get_node_name( ).                               " CHILD_1_5                       " OK
+DATA(hdl_psib7) = lr_root1->previous_sibling( lr_root1->child( ) )->get_node_name( ). " CHILD_1_6                       " OK
+DATA(hdl_nsib7) = lr_root1->next_sibling( lr_root1->child( ) )->get_node_name( ).     " CHILD_1_3                       " OK
+">>> Check handle
+
+lr_root1->remove_child( i_child_node = lr_chld3 ).                                    " 1 / 4 / 6 / [5]                 " OK
+
+"<<< Check handle
+DATA(hdl_name8) = lr_root1->child( )->get_node_name( ).                               " CHILD_1_5                       " OK
+DATA(hdl_psib8) = lr_root1->previous_sibling( lr_root1->child( ) )->get_node_name( ). " CHILD_1_6                       " OK
+
+DATA: lr_nsib8 TYPE REF TO zcl_xml_lite_node.
+lr_nsib8 = lr_root1->next_sibling( lr_root1->child( ) ).
+IF lr_nsib8 IS NOT INITIAL.
+DATA(hdl_nsib8) = lr_nsib8->get_node_name( ).                                         " INITIAL                         " OK
+ENDIF.
+">>> Check handle
+
+lr_root1->previous( ).
+lr_root1->remove_before( i_ref_node = lr_chld4 ).                                     " 4 / [6] / 5
+
+"<<< Check handle
+DATA(hdl_name9) = lr_root1->child( )->get_node_name( ).                               " CHILD_1_6                       " OK
+DATA(hdl_psib9) = lr_root1->previous_sibling( lr_root1->child( ) )->get_node_name( ). " CHILD_1_4                       " OK
+DATA(hdl_nsib9) = lr_root1->next_sibling( lr_root1->child( ) )->get_node_name( ).     " CHILD_1_5                       " OK
+">>> Check handle
+
+lr_root1->remove_after( i_index_node = 1 ).                                           " [4] / 5
+
+"<<< Check handle
+DATA(hdl_name10) = lr_root1->child( )->get_node_name( ).                              " CHILD_1_6                       " OK
+DATA: lr_psib10 TYPE REF TO zcl_xml_lite_node.
+lr_psib10 = lr_root1->previous_sibling( lr_root1->child( ) ).
+IF lr_psib10 IS NOT INITIAL.
+DATA(hdl_psib10) = lr_psib10->get_node_name( ).
+ENDIF.
+DATA(hdl_nsib10) = lr_root1->next_sibling( lr_root1->child( ) )->get_node_name( ).    " CHILD_1_5                       " OK
+">>> Check handle
+
+
+
+
+
+
+" --- Display
+cl_abap_browser=>show_xml(
+  lr_xml2->stringify( )
+).
+
+
+
+
 
 
 

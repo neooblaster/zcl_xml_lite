@@ -1,117 +1,117 @@
-class ZCL_XML_LITE definition
-  public
-  final
-  create public .
+CLASS zcl_xml_lite DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+PUBLIC SECTION.
 
-  methods CONSTRUCTOR
-    importing
-      value(I_XML_STRING) type STRING optional .
-  methods ATTRIBUTE
-    importing
-      !I_ATTRIBUTE_NAME type ZDT_XML_LITE_ATTRIBUTE_NAME
-    returning
-      value(R_ATTRIBUTE) type ref to ZCL_XML_LITE_ATTRIBUTE .
-  methods ATTRIBUTES
-    returning
-      value(R_ATTRIBUTES) type ZT_XML_LITE_ATTRIBUTE_LIST .
-  methods SET_ATTRIBUTE
-    importing
-      !I_NAME type STRING
-      !I_VALUE type STRING .
-  methods ROOT_NODE
-    returning
-      value(R_ROOT_NODE) type ref to ZCL_XML_LITE_NODE .
-  methods NODE
-    importing
-      !I_NODE_NAME type ZDT_XML_LITE_NODE_NAME
-    returning
-      value(R_NODE) type ref to ZCL_XML_LITE_NODE .
-  methods NODES
-    importing
-      value(I_NODE_NAME) type ZDT_XML_LITE_NODE_NAME optional
-    returning
-      value(R_NODES) type ZT_XML_LITE_CHILD_LIST .
-  methods SET_ROOT_NODE
-    importing
-      !I_ROOT_NODE type ref to ZCL_XML_LITE_NODE .
-  methods PRETTIFY
-    importing
-      !I_PRETTIFY type CHAR1 optional .
-  methods SET_EOL
-    importing
-      !I_NT_EOL type CHAR1 optional
-      !I_UX_EOL type CHAR1 optional .
-  methods USE_SPACE
-    importing
-      !I_SIZE type I optional .
-  methods USE_TAB .
-  methods STRINGIFY
-    returning
-      value(R_XML_STR) type STRING .
-  methods VERSION
-    returning
-      value(R_VERSION) type STRING .
-protected section.
-private section.
+  METHODS constructor
+    IMPORTING
+      VALUE(i_xml_string) TYPE string OPTIONAL .
+  METHODS attribute
+    IMPORTING
+      !i_attribute_name TYPE zdt_xml_lite_attribute_name
+    RETURNING
+      VALUE(r_attribute) TYPE REF TO zcl_xml_lite_attribute .
+  METHODS attributes
+    RETURNING
+      VALUE(r_attributes) TYPE zt_xml_lite_attribute_list .
+  METHODS set_attribute
+    IMPORTING
+      !i_name TYPE string
+      !i_value TYPE string .
+  METHODS root_node
+    RETURNING
+      VALUE(r_root_node) TYPE REF TO zcl_xml_lite_node .
+  METHODS node
+    IMPORTING
+      !i_node_name TYPE zdt_xml_lite_node_name
+    RETURNING
+      VALUE(r_node) TYPE REF TO zcl_xml_lite_node .
+  METHODS nodes
+    IMPORTING
+      VALUE(i_node_name) TYPE zdt_xml_lite_node_name OPTIONAL
+    RETURNING
+      VALUE(r_nodes) TYPE zt_xml_lite_child_list .
+  METHODS set_root_node
+    IMPORTING
+      !i_root_node TYPE REF TO zcl_xml_lite_node .
+  METHODS prettify
+    IMPORTING
+      !i_prettify TYPE char1 OPTIONAL .
+  METHODS set_eol
+    IMPORTING
+      !i_nt_eol TYPE char1 OPTIONAL
+      !i_ux_eol TYPE char1 OPTIONAL .
+  METHODS use_space
+    IMPORTING
+      !i_size TYPE i OPTIONAL .
+  METHODS use_tab .
+  METHODS stringify
+    RETURNING
+      VALUE(r_xml_str) TYPE string .
+  METHODS version
+    RETURNING
+      VALUE(r_version) TYPE string .
+PROTECTED SECTION.
+PRIVATE SECTION.
 
-  types ABAP_BOOL type CHAR1 .
+  TYPES abap_bool TYPE char1 .
 
-  data _XML_STRING type STRING .
-  data _XML_PRETTIFY type ZCL_XML_LITE=>ABAP_BOOL value 'X' ##NO_TEXT.
-  data _XML_EOL type ZCL_XML_LITE=>ABAP_BOOL .
-  data _XML_EOL_SET type STRING value 'AUTO' ##NO_TEXT.
-  data _XML_USE_SPACE type ZCL_XML_LITE=>ABAP_BOOL value 'X' ##NO_TEXT.
-  data _XML_TAB_SIZE type I value 4 ##NO_TEXT.
-  data _LT_RESULT type MATCH_RESULT_TAB .
-  data _LT_RESULT_LEN type I value 0 ##NO_TEXT.
-  data _LT_TABIX type I value 1 ##NO_TEXT.
-  data _LT_TABIX_PREV type I value 0 ##NO_TEXT.
-  data _GT_RESULT type MATCH_RESULT_TAB .
-  data _GT_TABIX type I value 1 ##NO_TEXT.
-  data _GT_TABIX_PREV type I value 0 ##NO_TEXT.
-  data _GT_RESULT_LEN type I value 0 ##NO_TEXT.
-  data _PARSING_NODE_LEVEL type I value 0 ##NO_TEXT.
-  data _ROOT_NODE type ref to ZCL_XML_LITE_NODE .
-  data _ATTRIBUTES type ZT_XML_LITE_ATTRIBUTE_LIST .
-  class-data _ABAP_TRUE type ZCL_XML_LITE=>ABAP_BOOL value 'X' ##NO_TEXT.
-  class-data _ABAP_FALSE type ZCL_XML_LITE=>ABAP_BOOL value ' ' ##NO_TEXT.
-  class-data _VERSION type STRING value 'V0.1.0' ##NO_TEXT.
+  DATA _xml_string TYPE string .
+  DATA _xml_prettify TYPE zcl_xml_lite=>abap_bool VALUE 'X' ##NO_TEXT.
+  DATA _xml_eol TYPE zcl_xml_lite=>abap_bool .
+  DATA _xml_eol_set TYPE string VALUE 'AUTO' ##NO_TEXT.
+  DATA _xml_use_space TYPE zcl_xml_lite=>abap_bool VALUE 'X' ##NO_TEXT.
+  DATA _xml_tab_size TYPE i VALUE 4 ##NO_TEXT.
+  DATA _lt_result TYPE match_result_tab .
+  DATA _lt_result_len TYPE i VALUE 0 ##NO_TEXT.
+  DATA _lt_tabix TYPE i VALUE 1 ##NO_TEXT.
+  DATA _lt_tabix_prev TYPE i VALUE 0 ##NO_TEXT.
+  DATA _gt_result TYPE match_result_tab .
+  DATA _gt_tabix TYPE i VALUE 1 ##NO_TEXT.
+  DATA _gt_tabix_prev TYPE i VALUE 0 ##NO_TEXT.
+  DATA _gt_result_len TYPE i VALUE 0 ##NO_TEXT.
+  DATA _parsing_node_level TYPE i VALUE 0 ##NO_TEXT.
+  DATA _root_node TYPE REF TO zcl_xml_lite_node .
+  DATA _attributes TYPE zt_xml_lite_attribute_list .
+  CLASS-DATA _abap_true TYPE zcl_xml_lite=>abap_bool VALUE 'X' ##NO_TEXT.
+  CLASS-DATA _abap_false TYPE zcl_xml_lite=>abap_bool VALUE ' ' ##NO_TEXT.
+  CLASS-DATA _version TYPE string VALUE 'V0.1.0' ##NO_TEXT.
 
-  methods _GET_TAG_NAME
-    importing
-      value(I_TAG_NODE) type STRING
-    returning
-      value(R_TAG_NAME) type STRING .
-  methods _PARSE_NODE
-    returning
-      value(R_NODE) type ref to ZCL_XML_LITE_NODE .
-  methods _PARSE_PROCESS_INSTRUCTION .
-  methods _PARSE_ATTRIBUTES
-    importing
-      !I_TAG type STRING
-    returning
-      value(R_ATTRIBUTES) type ZT_XML_LITE_ATTRIBUTE_LIST_PAR .
-  methods _RENDER_NODE
-    importing
-      !I_XML_NODE type ref to ZCL_XML_LITE_NODE
-      !I_LEVEL type I default 0
-    preferred parameter I_XML_NODE .
-  methods _RENDER_ATTRIBUTE
-    importing
-      !I_ATTRIBUTE type ref to ZCL_XML_LITE_ATTRIBUTE
-    returning
-      value(R_ATTRIBUTE_STR) type STRING .
-  methods _RENDER_PROCESS_INSTRUCTION .
-  methods _EOL
-    returning
-      value(R_EOL) type STRING .
-  methods _INDENT
-    importing
-      !I_LEVEL type I
-    returning
-      value(R_INDENT) type STRING .
+  METHODS _get_tag_name
+    IMPORTING
+      VALUE(i_tag_node) TYPE string
+    RETURNING
+      VALUE(r_tag_name) TYPE string .
+  METHODS _parse_node
+    RETURNING
+      VALUE(r_node) TYPE REF TO zcl_xml_lite_node .
+  METHODS _parse_process_instruction .
+  METHODS _parse_attributes
+    IMPORTING
+      !i_tag TYPE string
+    RETURNING
+      VALUE(r_attributes) TYPE zt_xml_lite_attribute_list_par .
+  METHODS _render_node
+    IMPORTING
+      !i_xml_node TYPE REF TO zcl_xml_lite_node
+      !i_level TYPE i DEFAULT 0
+    PREFERRED PARAMETER i_xml_node .
+  METHODS _render_attribute
+    IMPORTING
+      !i_attribute TYPE REF TO zcl_xml_lite_attribute
+    RETURNING
+      VALUE(r_attribute_str) TYPE string .
+  METHODS _render_process_instruction .
+  METHODS _eol
+    RETURNING
+      VALUE(r_eol) TYPE string .
+  METHODS _indent
+    IMPORTING
+      !i_level TYPE i
+    RETURNING
+      VALUE(r_indent) TYPE string .
 ENDCLASS.
 
 
@@ -119,15 +119,15 @@ ENDCLASS.
 CLASS ZCL_XML_LITE IMPLEMENTATION.
 
 
-  method ATTRIBUTE.
-  endmethod.
+  METHOD attribute.
+  ENDMETHOD.
 
 
-  method ATTRIBUTES.
+  METHOD attributes.
 
     r_attributes = me->_attributes.
 
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD constructor.
@@ -163,7 +163,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
     DATA : lv_eol_count TYPE i        ,
            ls_opsystem  TYPE opsystem ,
-           lv_filsys    TYPE FILESYS  .
+           lv_filsys    TYPE filesys  .
 
 
     IF i_xml_string IS SUPPLIED.
@@ -175,22 +175,22 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
       FIND ALL OCCURRENCES OF |\r\n| IN i_xml_string MATCH COUNT lv_eol_count.
 
       IF lv_eol_count > 0.
-        me->_XML_EOL = 'NT'.
+        me->_xml_eol = 'NT'.
       ELSE.
         FIND ALL OCCURRENCES OF |\n| IN i_xml_string MATCH COUNT lv_eol_count.
 
         IF lv_eol_count > 0.
-          me->_XML_EOL = 'UX'.
+          me->_xml_eol = 'UX'.
         ELSE.
           SELECT SINGLE filesys FROM opsystem INTO lv_filsys WHERE opsys = sy-opsys.
 
           CASE lv_filsys .
             WHEN 'UNIX'.
-              me->_XML_EOL = 'UX'.
+              me->_xml_eol = 'UX'.
             WHEN 'WINDOWS NT'.
-              me->_XML_EOL = 'NT'.
+              me->_xml_eol = 'NT'.
             WHEN OTHERS.
-              me->_XML_EOL = 'NT'.
+              me->_xml_eol = 'NT'.
           ENDCASE.
 
         ENDIF.
@@ -232,7 +232,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method NODE.
+  METHOD node.
 
     DATA : ls_node TYPE zst_xml_lite_child_node .
 
@@ -240,10 +240,10 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
     r_node = ls_node-node.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method NODES.
+  METHOD nodes.
 
     DATA : lt_nodes TYPE zt_xml_lite_child_list  ,
            ls_node  TYPE zst_xml_lite_child_node .
@@ -258,7 +258,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
       r_nodes = me->_root_node->children( ).
     ENDIF.
 
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD prettify.
@@ -279,11 +279,11 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method ROOT_NODE.
+  METHOD root_node.
 
     r_root_node = me->_root_node.
 
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD set_attribute.
@@ -327,11 +327,11 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method SET_ROOT_NODE.
+  METHOD set_root_node.
 
     me->_root_node = i_root_node.
 
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD stringify.
@@ -358,18 +358,18 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method USE_TAB.
+  METHOD use_tab.
 
     me->_xml_use_space = ' '.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method VERSION.
+  METHOD version.
 
     r_version = zcl_xml_lite=>_version.
 
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD _eol.
@@ -400,7 +400,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method _GET_TAG_NAME.
+  METHOD _get_tag_name.
     DATA : lv_tag_name     TYPE        string                  ,
            lr_regex        TYPE REF TO cl_abap_regex           ,
            lr_matcher      TYPE REF TO cl_abap_matcher         ,
@@ -430,7 +430,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
     r_tag_name = lv_tag_name.
 
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD _indent.
@@ -505,7 +505,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method _PARSE_NODE.
+  METHOD _parse_node.
 
     DATA : lr_xml_node          TYPE REF TO zcl_xml_lite_node              ,
            lr_xml_child_node    TYPE REF TO zcl_xml_lite_node              ,
@@ -533,7 +533,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
 
     " Create a XML_NODE instance
-    lr_xml_node = new zcl_xml_lite_node( ).
+    lr_xml_node = NEW zcl_xml_lite_node( ).
 
 
     " Searching for node  :
@@ -582,7 +582,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
           " So we have simply to create node with it attribute
           " and append it
           lv_child_tag_name = me->_get_tag_name( lv_tag_candidat ).
-          lr_xml_child_node = new zcl_xml_lite_node( lv_child_tag_name ).
+          lr_xml_child_node = NEW zcl_xml_lite_node( lv_child_tag_name ).
           lr_xml_node->append_child( lr_xml_child_node ).
 
           " Get parsed attribute (name = value)
@@ -705,10 +705,10 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
     " Return build XML_NODE instance
     r_node = lr_xml_node.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method _PARSE_PROCESS_INSTRUCTION.
+  METHOD _parse_process_instruction.
 
     DATA : ls_lt_result              TYPE        match_result                   ,
            ls_gt_result              TYPE        match_result                   ,
@@ -757,7 +757,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
           CLEAR ls_attribute_entry.
 
-          lr_attribute = new zcl_xml_lite_attribute(
+          lr_attribute = NEW zcl_xml_lite_attribute(
             i_name  = ls_attribute-name
             i_value = ls_attribute-value
           ).
@@ -782,10 +782,10 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
     ENDDO.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method _RENDER_ATTRIBUTE.
+  METHOD _render_attribute.
 
     DATA : lv_attribute TYPE string ,
            lv_att_nam   TYPE string ,
@@ -798,7 +798,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
     r_attribute_str = lv_attribute.
 
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD _render_node.
@@ -882,7 +882,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method _RENDER_PROCESS_INSTRUCTION.
+  METHOD _render_process_instruction.
 
     DATA : lv_eol        TYPE string                 ,
            lv_attribute  TYPE string                 ,
@@ -900,5 +900,5 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
     lv_eol = me->_eol( ).
     CONCATENATE '<?xml' lv_attributes ' ?>' lv_eol INTO me->_xml_string.
 
-  endmethod.
+  ENDMETHOD.
 ENDCLASS.
