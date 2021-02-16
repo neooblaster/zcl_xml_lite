@@ -297,6 +297,7 @@ lr_Button->set_attribute(
   i_name  = 'ariaHasPopup'
   i_value = 'Menu'
 ).
+lr_Button->remove_attribute( 'ariaHasPopup' ).
 DATA(lr_dependents) = new zcl_xml_lite_node( 'dependents' ).
 DATA(lr_Fragment)   = new zcl_xml_lite_node( 'core:Fragment' ).
 lr_Fragment->set_attribute(
@@ -320,6 +321,8 @@ cl_abap_browser=>show_xml(
   lr_xml3->stringify( )
 ).
 
+
+DATA(lr_clone) = lr_View->clone( ).
 
 
 

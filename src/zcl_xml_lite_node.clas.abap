@@ -42,7 +42,9 @@ PUBLIC SECTION.
       !i_name TYPE string
     RETURNING
       VALUE(r_value) TYPE string .
-  METHODS remove_attribute .
+  METHODS remove_attribute
+    IMPORTING
+      !i_name TYPE string .
   METHODS attributes
     RETURNING
       VALUE(r_attributes) TYPE zt_xml_lite_attribute_list .
@@ -112,8 +114,11 @@ PUBLIC SECTION.
   METHODS parent
     RETURNING
       VALUE(r_parent_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS clone .
-  METHODS clone_child .
+  METHODS clone
+    IMPORTING
+      !i_node TYPE REF TO zcl_xml_lite_node OPTIONAL
+    RETURNING
+      VALUE(r_clone_node) TYPE REF TO zcl_xml_lite_node .
 PROTECTED SECTION.
 PRIVATE SECTION.
 
@@ -183,10 +188,40 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
 
 
   METHOD clone.
-  ENDMETHOD.
+
+    DATA: lr_src_node   TYPE REF TO zcl_xml_lite_node       ,
+          lr_new_node   TYPE REF TO zcl_xml_lite_node       ,
+          lv_node_nam   TYPE        string                  ,
+          ls_attribute  TYPE        zst_xml_lite_attribute  ,
+          ls_child_node TYPE        zst_xml_lite_child_node .
 
 
-  METHOD clone_child.
+    " Defining node to copy (if not set, copy current node)
+    IF i_node IS SUPPLIED.
+      lr_src_node = i_node.
+    ELSE.
+      lr_src_node = me.
+    ENDIF.
+
+    " Get node name
+    lv_node_nam = lr_src_node->get_node_name( ).
+
+    " Creation of node
+    lr_new_node = NEW zcl_xml_lite_node( lv_node_nam ).
+
+    " Copy Attributes
+    LOOP AT lr_src_node->attributes( ) INTO ls_attribute.
+      ls_attribute-attribute = ls_attribute-attribute->clone( ).
+      APPEND ls_attribute TO lr_new_node->_attributes.
+    ENDLOOP.
+
+    " Copy Children
+    LOOP AT lr_src_node->children( ) INTO ls_child_node.
+      lr_new_node->append_child( ls_child_node-node->clone( ) ).
+    ENDLOOP.
+
+    r_clone_node = lr_new_node.
+
   ENDMETHOD.
 
 
@@ -514,6 +549,9 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
 
 
   METHOD remove_attribute.
+
+    DELETE me->_attributes WHERE name = i_name.
+
   ENDMETHOD.
 
 
