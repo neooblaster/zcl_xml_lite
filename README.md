@@ -1,7 +1,7 @@
 # zcl_xml_lite
 
-A very basic class to handle XML node &amp;
-attribute in a better way than **ixml** &amp; **sxml**.
+A very basic class to handle XML nodes &amp;
+attributes in a better way than **ixml** &amp; **sxml**.
 
 
 ## Purpose of the class
@@ -28,6 +28,8 @@ then loop on children nodes.
 
 This is the goal of this class : allowing most common and basic manipulation
 of XML nodes : read, update, create, remove nodes and their attributes, no more, no less.
+
+Below, an example with ``cl_ixml``:
 
 ````abap
 " Source : https://blogs.sap.com/2013/04/11/abap-and-xml-wrapping-it-up/
@@ -90,6 +92,8 @@ xml = |<text>|               &&
       |  <line>cccc</line>|  &&
       |</text>|              .
 
+cl_abap_browser=>show_xml( xml ).
+
 DATA lr_xml TYPE REF TO zcl_xml_lite.
 lr_xml = NEW zcl_xml_lite( xml ).
 
@@ -101,6 +105,8 @@ WHILE lr_root_node->next( ) IS NOT INITIAL.
     to_upper( lr_root_node->child( )->get_value( ) )
   ).
 ENDWHILE.
+
+cl_abap_browser=>show_xml( lr_xml->stringify( ) ).
 ````
 
 In debug, it's very easy to browse between nodes :
