@@ -1,58 +1,63 @@
-CLASS zcl_xml_lite DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class ZCL_XML_LITE definition
+  public
+  final
+  create public .
 
-PUBLIC SECTION.
+public section.
 
-  METHODS constructor
-    IMPORTING
-      VALUE(i_xml_string) TYPE string OPTIONAL .
-  METHODS attribute
-    IMPORTING
-      !i_attribute_name TYPE zdt_xml_lite_attribute_name
-    RETURNING
-      VALUE(r_attribute) TYPE REF TO zcl_xml_lite_attribute .
-  METHODS attributes
-    RETURNING
-      VALUE(r_attributes) TYPE zt_xml_lite_attribute_list .
-  METHODS set_attribute
-    IMPORTING
-      !i_name TYPE string
-      !i_value TYPE string .
-  METHODS root_node
-    RETURNING
-      VALUE(r_root_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS node
-    IMPORTING
-      !i_node_name TYPE zdt_xml_lite_node_name
-    RETURNING
-      VALUE(r_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS nodes
-    IMPORTING
-      VALUE(i_node_name) TYPE zdt_xml_lite_node_name OPTIONAL
-    RETURNING
-      VALUE(r_nodes) TYPE zt_xml_lite_child_list .
-  METHODS set_root_node
-    IMPORTING
-      !i_root_node TYPE REF TO zcl_xml_lite_node .
-  METHODS prettify
-    IMPORTING
-      !i_prettify TYPE char1 OPTIONAL .
-  METHODS set_eol
-    IMPORTING
-      !i_nt_eol TYPE char1 OPTIONAL
-      !i_ux_eol TYPE char1 OPTIONAL .
-  METHODS use_space
-    IMPORTING
-      !i_size TYPE i OPTIONAL .
-  METHODS use_tab .
-  METHODS stringify
-    RETURNING
-      VALUE(r_xml_str) TYPE string .
-  METHODS version
-    RETURNING
-      VALUE(r_version) TYPE string .
+  methods CONSTRUCTOR
+    importing
+      value(I_XML_STRING) type STRING optional .
+  methods ATTRIBUTE
+    importing
+      !I_ATTRIBUTE_NAME type ZDT_XML_LITE_ATTRIBUTE_NAME
+    returning
+      value(R_ATTRIBUTE) type ref to ZCL_XML_LITE_ATTRIBUTE .
+  methods ATTRIBUTES
+    returning
+      value(R_ATTRIBUTES) type ZT_XML_LITE_ATTRIBUTE_LIST .
+  methods SET_ATTRIBUTE
+    importing
+      !I_NAME type STRING
+      !I_VALUE type STRING .
+  methods ROOT_NODE
+    importing
+      !I_ROOT_NODE type ref to ZCL_XML_LITE_NODE optional
+    returning
+      value(R_ROOT_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods NODE
+    importing
+      !I_NODE_NAME type ZDT_XML_LITE_NODE_NAME
+    returning
+      value(R_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods NODES
+    importing
+      value(I_NODE_NAME) type ZDT_XML_LITE_NODE_NAME optional
+    returning
+      value(R_NODES) type ZT_XML_LITE_CHILD_LIST .
+  methods SET_ROOT_NODE
+    importing
+      !I_ROOT_NODE type ref to ZCL_XML_LITE_NODE .
+  methods GET_ROOT_NODE
+    returning
+      value(R_ROOT_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods PRETTIFY
+    importing
+      !I_PRETTIFY type CHAR1 optional .
+  methods SET_EOL
+    importing
+      !I_NT_EOL type CHAR1 optional
+      !I_UX_EOL type CHAR1 optional .
+  methods USE_SPACE
+    importing
+      !I_SIZE type I optional .
+  methods USE_TAB .
+  methods STRINGIFY
+    returning
+      value(R_XML_STR) type STRING .
+  methods VERSION
+    returning
+      value(R_VERSION) type STRING .
 PROTECTED SECTION.
 PRIVATE SECTION.
 
@@ -215,6 +220,14 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
       " Start parsing XML to build all node
       me->_root_node = me->_parse_node( ).
 
+      " Add "version" to Process Instruction if there is no attributes
+      IF me->attributes( ) IS INITIAL.
+        me->set_attribute(
+          i_name  = 'version'
+          i_value = '1.0'
+        ).
+      ENDIF.
+
 
     ELSE.
       me->set_attribute(
@@ -230,6 +243,13 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
               me->_gt_result  .
 
   ENDMETHOD.
+
+
+  method GET_ROOT_NODE.
+
+    r_root_node = me->_root_node.
+
+  endmethod.
 
 
   METHOD node.
@@ -280,6 +300,10 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 
 
   METHOD root_node.
+
+    IF i_root_node IS SUPPLIED.
+      me->set_root_node( i_root_node ).
+    ENDIF.
 
     r_root_node = me->_root_node.
 
@@ -663,7 +687,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
 *         " Any tag name found yet.
           ELSE.
             lv_tag_name = me->_get_tag_name( lv_tag_candidat ).
-            lr_xml_node->set_node_name( lv_tag_name ).
+            lr_xml_node->set_name( lv_tag_name ).
 
             " Get parsed attribute (name = value)
             lt_attributes = me->_parse_attributes( lv_tag_candidat ).
@@ -820,7 +844,7 @@ CLASS ZCL_XML_LITE IMPLEMENTATION.
     lv_eol    = me->_eol( ).
     lv_indent = me->_indent( i_level ).
 
-    lv_node_name = i_xml_node->get_node_name( ).
+    lv_node_name = i_xml_node->get_name( ).
     lv_node_val  = i_xml_node->get_value( ).
 
     LOOP AT i_xml_node->attributes( ) INTO ls_attribute .

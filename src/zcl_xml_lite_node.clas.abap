@@ -1,124 +1,124 @@
-CLASS zcl_xml_lite_node DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class ZCL_XML_LITE_NODE definition
+  public
+  final
+  create public .
 
-PUBLIC SECTION.
+public section.
 
-  TYPES:
+  types:
     BEGIN OF ty_node_list               ,
            name TYPE        string            ,
            node TYPE REF TO zcl_xml_lite_node ,
           END   OF ty_node_list .
 
-  METHODS constructor
-    IMPORTING
-      VALUE(i_node_name) TYPE string DEFAULT 'NODE'
-      !i_parent_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-    PREFERRED PARAMETER i_node_name .
-  METHODS set_parent_node
-    IMPORTING
-      !i_parent_node TYPE REF TO zcl_xml_lite_node .
-  METHODS get_parent_node
-    RETURNING
-      VALUE(r_parent_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS set_node_name
-    IMPORTING
-      VALUE(i_node_name) TYPE string .
-  METHODS get_node_name
-    RETURNING
-      VALUE(r_node_name) TYPE string .
-  METHODS set_attribute
-    IMPORTING
-      !i_name TYPE string
-      !i_value TYPE string .
-  METHODS get_attribute
-    IMPORTING
-      !i_name TYPE string
-    RETURNING
-      VALUE(r_attribute) TYPE REF TO zcl_xml_lite_attribute .
-  METHODS get_attribute_value
-    IMPORTING
-      !i_name TYPE string
-    RETURNING
-      VALUE(r_value) TYPE string .
-  METHODS remove_attribute
-    IMPORTING
-      !i_name TYPE string .
-  METHODS attributes
-    RETURNING
-      VALUE(r_attributes) TYPE zt_xml_lite_attribute_list .
-  METHODS set_value
-    IMPORTING
-      !i_value TYPE string .
-  METHODS get_value
-    RETURNING
-      VALUE(r_value) TYPE string .
-  METHODS append_child
-    IMPORTING
-      !i_child_node TYPE REF TO zcl_xml_lite_node .
-  METHODS insert_before
-    IMPORTING
-      !i_new_node TYPE REF TO zcl_xml_lite_node
-      !i_ref_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-      !i_index_node TYPE i OPTIONAL .
-  METHODS insert_after
-    IMPORTING
-      !i_new_node TYPE REF TO zcl_xml_lite_node
-      !i_ref_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-      !i_index_node TYPE i OPTIONAL .
-  METHODS remove_child
-    IMPORTING
-      !i_child_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-      !i_child_node_index TYPE i OPTIONAL .
-  METHODS remove_before
-    IMPORTING
-      !i_ref_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-      !i_index_node TYPE i OPTIONAL .
-  METHODS remove_after
-    IMPORTING
-      !i_ref_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-      !i_index_node TYPE i OPTIONAL .
-  METHODS children
-    RETURNING
-      VALUE(r_child_list) TYPE zt_xml_lite_child_list .
-  METHODS length
-    RETURNING
-      VALUE(r_length) TYPE i .
-  METHODS next
-    RETURNING
-      VALUE(r_child_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS next_sibling
-    IMPORTING
-      !i_ref_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-      !i_index_node TYPE i OPTIONAL
-    PREFERRED PARAMETER i_ref_node
-    RETURNING
-      VALUE(r_sibling_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS previous
-    RETURNING
-      VALUE(r_child_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS previous_sibling
-    IMPORTING
-      !i_ref_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-      !i_index_node TYPE i OPTIONAL
-    PREFERRED PARAMETER i_ref_node
-    RETURNING
-      VALUE(r_sibling_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS reset
-    IMPORTING
-      !i_index TYPE i OPTIONAL .
-  METHODS child
-    RETURNING
-      VALUE(r_child_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS parent
-    RETURNING
-      VALUE(r_parent_node) TYPE REF TO zcl_xml_lite_node .
-  METHODS clone
-    IMPORTING
-      !i_node TYPE REF TO zcl_xml_lite_node OPTIONAL
-    RETURNING
-      VALUE(r_clone_node) TYPE REF TO zcl_xml_lite_node .
+  methods CONSTRUCTOR
+    importing
+      value(I_NODE_NAME) type STRING default 'NODE'
+      !I_PARENT_NODE type ref to ZCL_XML_LITE_NODE optional
+    preferred parameter I_NODE_NAME .
+  methods SET_PARENT_NODE
+    importing
+      !I_PARENT_NODE type ref to ZCL_XML_LITE_NODE .
+  methods GET_PARENT_NODE
+    returning
+      value(R_PARENT_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods SET_NAME
+    importing
+      value(I_NODE_NAME) type STRING .
+  methods GET_NAME
+    returning
+      value(R_NODE_NAME) type STRING .
+  methods SET_ATTRIBUTE
+    importing
+      !I_NAME type STRING
+      !I_VALUE type STRING .
+  methods GET_ATTRIBUTE
+    importing
+      !I_NAME type STRING
+    returning
+      value(R_ATTRIBUTE) type ref to ZCL_XML_LITE_ATTRIBUTE .
+  methods GET_ATTRIBUTE_VALUE
+    importing
+      !I_NAME type STRING
+    returning
+      value(R_VALUE) type STRING .
+  methods REMOVE_ATTRIBUTE
+    importing
+      !I_NAME type STRING .
+  methods ATTRIBUTES
+    returning
+      value(R_ATTRIBUTES) type ZT_XML_LITE_ATTRIBUTE_LIST .
+  methods SET_VALUE
+    importing
+      !I_VALUE type STRING optional .
+  methods GET_VALUE
+    returning
+      value(R_VALUE) type STRING .
+  methods APPEND_CHILD
+    importing
+      !I_CHILD_NODE type ref to ZCL_XML_LITE_NODE .
+  methods INSERT_BEFORE
+    importing
+      !I_NEW_NODE type ref to ZCL_XML_LITE_NODE
+      !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_INDEX_NODE type I optional .
+  methods INSERT_AFTER
+    importing
+      !I_NEW_NODE type ref to ZCL_XML_LITE_NODE
+      !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_INDEX_NODE type I optional .
+  methods REMOVE_CHILD
+    importing
+      !I_CHILD_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_CHILD_NODE_INDEX type I optional .
+  methods REMOVE_BEFORE
+    importing
+      !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_INDEX_NODE type I optional .
+  methods REMOVE_AFTER
+    importing
+      !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_INDEX_NODE type I optional .
+  methods CHILDREN
+    returning
+      value(R_CHILD_LIST) type ZT_XML_LITE_CHILD_LIST .
+  methods LENGTH
+    returning
+      value(R_LENGTH) type I .
+  methods NEXT
+    returning
+      value(R_CHILD_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods NEXT_SIBLING
+    importing
+      !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_INDEX_NODE type I optional
+    preferred parameter I_REF_NODE
+    returning
+      value(R_SIBLING_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods PREVIOUS
+    returning
+      value(R_CHILD_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods PREVIOUS_SIBLING
+    importing
+      !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_INDEX_NODE type I optional
+    preferred parameter I_REF_NODE
+    returning
+      value(R_SIBLING_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods RESET
+    importing
+      !I_INDEX type I optional .
+  methods CHILD
+    returning
+      value(R_CHILD_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods PARENT
+    returning
+      value(R_PARENT_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods CLONE
+    importing
+      !I_NODE type ref to ZCL_XML_LITE_NODE optional
+    returning
+      value(R_CLONE_NODE) type ref to ZCL_XML_LITE_NODE .
 PROTECTED SECTION.
 PRIVATE SECTION.
 
@@ -148,7 +148,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
     DATA : lv_node_name  TYPE string                  ,
            ls_child_node TYPE zst_xml_lite_child_node .
 
-    lv_node_name = i_child_node->get_node_name( ).
+    lv_node_name = i_child_node->get_name( ).
     i_child_node->set_parent_node( me ).
 
     ls_child_node-name = lv_node_name.
@@ -204,7 +204,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
     ENDIF.
 
     " Get node name
-    lv_node_nam = lr_src_node->get_node_name( ).
+    lv_node_nam = lr_src_node->get_name( ).
 
     " Creation of node
     lr_new_node = NEW zcl_xml_lite_node( lv_node_nam ).
@@ -228,7 +228,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   METHOD constructor.
 
     IF i_node_name IS SUPPLIED.
-      me->set_node_name( i_node_name ).
+      me->set_name( i_node_name ).
     ENDIF.
 
     IF i_parent_node IS SUPPLIED.
@@ -266,7 +266,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_node_name.
+  METHOD GET_NAME.
 
     r_node_name = me->_node_name.
 
@@ -315,7 +315,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
       IF lv_index > me->length( ).
         me->append_child( i_new_node ).
       ELSE.
-        lv_node_name = i_new_node->get_node_name( ).
+        lv_node_name = i_new_node->get_name( ).
         i_new_node->set_parent_node( me ).
 
         CLEAR ls_child_node.
@@ -363,7 +363,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
       IF lv_index > me->length( ).
         me->append_child( i_new_node ).
       ELSE.
-        lv_node_name = i_new_node->get_node_name( ).
+        lv_node_name = i_new_node->get_name( ).
         i_new_node->set_parent_node( me ).
 
         CLEAR ls_child_node.
@@ -663,7 +663,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD set_node_name.
+  METHOD SET_NAME.
 
     me->_node_name = i_node_name.
 
@@ -679,7 +679,12 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
 
   METHOD set_value.
 
-    me->_value = i_value.
+    IF i_value IS SUPPLIED.
+     me->_value = i_value.
+    ELSE.
+      CLEAR me->_value.
+    ENDIF.
+
 
   ENDMETHOD.
 

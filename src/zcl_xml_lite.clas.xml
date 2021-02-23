@@ -38,6 +38,12 @@
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE</CLSNAME>
+     <CMPNAME>GET_ROOT_NODE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get the XML root node</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_XML_LITE</CLSNAME>
      <CMPNAME>NODE</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Return the first occurence found for node name in root node</DESCRIPT>
@@ -58,7 +64,7 @@
      <CLSNAME>ZCL_XML_LITE</CLSNAME>
      <CMPNAME>ROOT_NODE</CMPNAME>
      <LANGU>E</LANGU>
-     <DESCRIPT>Return the root node</DESCRIPT>
+     <DESCRIPT>Return the XML root node (and set if parameter is supplied)</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_XML_LITE</CLSNAME>
