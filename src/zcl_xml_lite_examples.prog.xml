@@ -16,6 +16,30 @@
      <ENTRY>Example report to use ZCL_XML_LITE</ENTRY>
      <LENGTH>34</LENGTH>
     </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_DEM000</KEY>
+     <ENTRY>Purpose of the class demo case</ENTRY>
+     <LENGTH>38</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_DEM010</KEY>
+     <ENTRY>010: Parse a XML string</ENTRY>
+     <LENGTH>36</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_DEM020</KEY>
+     <ENTRY>020: Create a new XML</ENTRY>
+     <LENGTH>34</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_DEM030</KEY>
+     <ENTRY>030: Create root node</ENTRY>
+     <LENGTH>29</LENGTH>
+    </item>
    </TPOOL>
   </asx:values>
  </asx:abap>
