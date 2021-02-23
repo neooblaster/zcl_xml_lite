@@ -27,7 +27,12 @@ attributes in a better way than **ixml** &amp; **sxml**.
     * [Creating a new XML document](#creating-a-new-xml-document)
     * [Create a new node](#create-a-new-node)
     * [Setting up the root node](#setting-up-the-root-node)
+    * [Getting the root node](#getting-the-root-node)
     * [Handling a node (name and value)](#handling-a-node-name-and-value)
+    * [Handling node attributes](#handling-node-attributes)
+    * [Browsing between node](#browsing-between-node)
+    * [Adding new node (append and insert)](#adding-new-node-append-and-insert)
+    * [Removing node](#removing-node)
 * [Detailed Documentation](#detailed-documentation)
     * [Class ``ZCL_XML_LITE``](#class-zcl_xml_lite)
         * [``CONSTRUCTOR``](#constructor)
@@ -35,14 +40,18 @@ attributes in a better way than **ixml** &amp; **sxml**.
             * [Usage 2 - Create new XML](#usage-2---create-new-xml)
         * [``ATTRIBUTE``](#attribute)
         * [``ATTRIBUTES``](#attributes)
+        * [``GET_ROOT_NODE``](#get_root_node)
+            * [Get Root Node](#get-root-node)
         * [``NODE``](#node)
         * [``NODES``](#nodes)
         * [``PRETTIFY``](#prettify)
         * [``ROOT_NODE``](#root_node)
-            * [Get Root Node](#get-root-node)
+            * [Usage 1 - Get Root Node](#usage-1---get-root-node)
+            * [Usage 2 - Set Root Node](#usage-2---set-root-node)
         * [``SET_ATTRIBUTE``](#set_attribute)
         * [``SET_EOL``](#set_eol)
         * [``SET_ROOT_NODE``](#set_root_node)
+            * [Set Root Node](#set-root-node)
         * [``STRINGIFY``](#stringify)
         * [``USE_SPACE``](#use_space)
         * [``USE_TAB``](#use_tab)
@@ -74,8 +83,11 @@ attributes in a better way than **ixml** &amp; **sxml**.
         * [``RESET``](#reset)
         * [``SET_ATTRIBUTE``](#set_attribute)
         * [``SET_NAME``](#set_name)
+            * [Set Node Name](#set-node-name)
         * [``SET_PARENT_NODE``](#set_parent_node)
         * [``SET_VALUE``](#set_value)
+            * [Usage 1 - Set Node Value](#usage-1---set-node-value)
+            * [Usage 2 - Remove Node Value](#usage-2---remove-node-value)
     * [Class ``ZCL_XML_LITE_ATTRIBUTE``](#class-zcl_xml_lite_attribute)
         * [``CONSTRUCTOR``](#constructor)
         * [``SET_NAME``](#set_name)
@@ -83,6 +95,7 @@ attributes in a better way than **ixml** &amp; **sxml**.
         * [``SET_VALUE``](#set_value)
         * [``GET_VALUE``](#get_value)
         * [``CLONE``](#clone)
+* [WIP Status](#wip-status)
 [](EndSummary)
 
 
@@ -324,11 +337,27 @@ If no import parameter is passed, the default name of the node is ``NODE`` :
 
 ### Setting up the root node
 
-Once you have created your new node, simple use method ``set_root_node`` :
+Once you have created your new node, simply use method ``set_root_node`` :
 
 ````abap
 lr_xml->set_root_node( lr_node ).
 ````
+
+
+
+### Getting the root node
+
+The first node of the XML represents the **root node**,
+the one which contains all the others.
+
+To retrieve the **root node** of the parsed XML or of your new XML
+simply use method ``get_root_node`` :
+
+````abap
+DATA : lr_root_node TYPE zcl_xml_lite_node .
+lr_root_node = lr_xml->get_root_node( ).
+````
+
 
 
 
@@ -419,6 +448,25 @@ DATA(lr_xml) = NEW zcl_xml_lite(  ) .
 
 
 
+#### ``GET_ROOT_NODE``
+
+* Returning parameter :
+    * ``r_root_node``, type `zcl_xml_lite_node` - _Represents the root XML node_.
+    
+
+##### Get Root Node
+
+> Retrieve the root node of the XML Document
+
+````abap
+DATA(lr_root_node) = lr_xml->get_root_node( ).
+````
+
+
+
+
+
+
 #### ``NODE``
 
 
@@ -433,16 +481,32 @@ DATA(lr_xml) = NEW zcl_xml_lite(  ) .
 
 #### ``ROOT_NODE``
 
+* Import parameter :
+    * ``i_root_node``, **optional**, type `zcl_xml_lite_node` - _XML Node to set as root node_.
 * Returning parameter :
     * ``r_root_node``, type `zcl_xml_lite_node` - _Represents the root XML node_.
     
-##### Get Root Node
+    
+##### Usage 1 - Get Root Node
 
 > Retrieve the root node of the XML Document
 
 ````abap
 DATA(lr_root_node) = lr_xml->root_node( ).
 ````
+    
+    
+##### Usage 2 - Set Root Node
+
+> Retrieve the root node of the XML Document
+
+````abap
+DATA(lr_root_node) = NEW zcl_xml_lite_node( 'ROOT_NODE' ).
+lr_xml->root_node( lr_root_node ).
+````
+
+
+
 
 
 
@@ -455,6 +519,22 @@ DATA(lr_root_node) = lr_xml->root_node( ).
 
 
 #### ``SET_ROOT_NODE``
+
+* Import parameter :
+    * ``i_root_node``, type `zcl_xml_lite_node` - _XML Node to set as root node_.
+
+
+##### Set Root Node
+
+> Set the root node of the XML document.
+
+````abap
+DATA(lr_root_node) = NEW zcl_xml_lite_node( 'ROOT_NODE' ).
+lr_xml->set_root_node( lr_root_node ).
+````
+
+
+
 
 
 
@@ -583,6 +663,21 @@ DATA(lr_root_node) = lr_xml->root_node( ).
 
 #### ``SET_NAME``
 
+* Import parameter :
+    * ``i_node_name``, type `string` - _XML tag name_.
+    
+
+##### Set Node Name
+
+> Set the XML tag name.
+
+````abap
+lr_node->set_name( 'NODE_TAG_NAME' ).
+````
+
+
+
+
 
 
 #### ``SET_PARENT_NODE``
@@ -590,6 +685,36 @@ DATA(lr_root_node) = lr_xml->root_node( ).
 
 
 #### ``SET_VALUE``
+
+* Import parameter :
+    * ``i_value``, **optional**, type `string` - _Value of node_.
+    
+
+##### Usage 1 - Set Node Value
+
+> Set the value between XML tag.
+
+````abap
+lr_node->set_value( 'My node value here' ).
+````
+
+````xml
+<NODE>My node value here</NODE>
+````
+
+
+
+##### Usage 2 - Remove Node Value
+
+> Remove the node value to get empty tag (if node has no children).
+
+````abap
+lr_node->set_value( ).
+````
+
+````xml
+<NODE />
+````
 
 
 
@@ -619,3 +744,72 @@ DATA(lr_root_node) = lr_xml->root_node( ).
 
 
 #### ``CLONE``
+
+
+
+
+
+## WIP Status
+
+* [ ] ZCL_XML_LITE
+    * [X] CONSTRUCTOR
+    * [ ] ATTRIBUTE
+    * [ ] ATTRIBUTES
+    * [ ] SET_ATTRIBUTE
+    * [X] ROOT_NODE
+    * [ ] NODE
+    * [ ] NODES
+    * [X] SET_ROOT_NODE
+    * [X] GET_ROOT_NODE
+    * [ ] PRETTIFY
+    * [ ] SET_EOL
+    * [ ] USE_SPACE
+    * [ ] USE_TAB
+    * [ ] STRINGIFY
+    * [ ] VERSION
+* [ ] ZCL_XML_LITE_NODE
+    * [ ] CONSTRUCTOR
+    * [ ] SET_PARENT_NODE
+    * [ ] GET_PARENT_NODE
+    * [X] SET_NAME
+    * [ ] GET_NAME
+    * [ ] SET_ATTRIBUTE
+    * [ ] GET_ATTRIBUTE
+    * [ ] GET_ATTRIBUTE_VALUE
+    * [ ] REMOVE_ATTRIBUTE
+    * [ ] ATTRIBUTES
+    * [X] SET_VALUE
+    * [ ] GET_VALUE
+    * [ ] APPEND_CHILD
+    * [ ] INSERT_BEFORE
+    * [ ] INSERT_AFTER
+    * [ ] REMOVE_CHILD
+    * [ ] REMOVE_BEFORE
+    * [ ] REMOVE_AFTER
+    * [ ] CHILDREN
+    * [ ] LENGTH
+    * [ ] NEXT
+    * [ ] NEXT_SIBLING
+    * [ ] PREVIOUS
+    * [ ] PREVIOUS_SIBLING
+    * [ ] RESET
+    * [ ] CHILD
+    * [ ] PARENT
+    * [ ] CLONE
+* [ ] ZCL_XML_LITE_ATTRIBUTE
+    * [ ] CONSTRUCTOR
+    * [ ] SET_NAME
+    * [ ] GET_NAME
+    * [ ] SET_VALUE
+    * [ ] GET_VALUE
+    * [ ] CLONE
+    
+
+Documentation sample :
+
+* Import parameter :
+    * ``i_``, **optional**, type ` ` - _desc_.
+* Exporting parameter :
+    * ``e_``, type ` ` - _desc_.
+* Returning parameter :
+    * ``r_``, type ` ` - _desc_.
