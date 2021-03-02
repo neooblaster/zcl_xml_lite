@@ -1,8 +1,4 @@
-# zcl_xml_lite
-
-<hr />
-<div style="text-align: center">Version 0.1.0</div>
-<hr />
+**# zcl_xml_lite - Version 0.1.0
 
 > Documentation is still in WIP status.
 >
@@ -72,7 +68,7 @@ attributes in a better way than **ixml** &amp; **sxml**.
     * [Class ``ZCL_XML_LITE_NODE``](#class-zcl_xml_lite_node)
         * [``CONSTRUCTOR``](#constructor)
         * [``APPEND_CHILD``](#append_child)
-        * [Add a new child node](#add-a-new-child-node)
+            * [Add a new child node](#add-a-new-child-node)
         * [``ATTRIBUTES``](#attributes)
         * [``CHILD``](#child)
             * [Get current handled child node](#get-current-handled-child-node)
@@ -84,7 +80,13 @@ attributes in a better way than **ixml** &amp; **sxml**.
         * [``GET_PARENT_NODE``](#get_parent_node)
         * [``GET_VALUE``](#get_value)
         * [``INSERT_AFTER``](#insert_after)
+            * [Usage 1 - Insert after current handled child node](#usage-1---insert-after-current-handled-child-node)
+            * [Usage 2 - Insert after specified child node](#usage-2---insert-after-specified-child-node)
+            * [Usage 3 - Insert after specified child node using it index](#usage-3---insert-after-specified-child-node-using-it-index)
         * [``INSERT_BEFORE``](#insert_before)
+            * [Usage 1 - Insert before current handled child node](#usage-1---insert-before-current-handled-child-node)
+            * [Usage 2 - Insert before specified child node](#usage-2---insert-before-specified-child-node)
+            * [Usage 3 - Insert before specified child node using it index](#usage-3---insert-before-specified-child-node-using-it-index)
         * [``LENGTH``](#length)
         * [``NEXT``](#next)
             * [Move handling index to the next child](#move-handling-index-to-the-next-child)
@@ -650,14 +652,14 @@ The three **ABAP** code examples will produce the same result :
 **Using handled node** :
 
 ````abap
-lr_root_node->insert_child( lr_new_node ).
+lr_root_node->insert_before( lr_new_node ).
 ````
 
 **Using a reference node** :
 
 ````abap
 " lr_ref_node is <CHILD_2 />
-lr_root_node->insert_child( 
+lr_root_node->insert_before( 
     i_new_node = lr_new_node 
     i_ref_node = lr_ref_node
 ).
@@ -666,7 +668,7 @@ lr_root_node->insert_child(
 **Using handled node** :
 
 ````abap
-lr_root_node->insert_child( 
+lr_root_node->insert_before( 
     i_new_node   = lr_new_node 
     i_index_node = 2
 ).
@@ -681,9 +683,51 @@ updated (left to `2`), the next iteration (index `3`) will repeat the same child
 
 
 
-
-
 #### Inserting after an another child node.
+
+It's also possible to add a new node behind the specified **node**, **index** or
+if not specified, current handled child node.
+
+The method ``insert_after( )`` has the same **import parameters** that
+``insert_before( )``.
+
+Inserting node after is not common and have an important aspect to keep in mind,
+especially when it's done without import parameter :
+
+If you insert a new node after the current handled node, as expected, the next
+sibling is the new node. In a ``WHILE`` loop, the next children will be the 
+new node. **This method can easily creates infinite loop if you do not make
+checks.**
+
+Please see below to illustrate.
+
+Considering the current XML with node ``CHILD_2`` which is currently handled :
+
+````xml
+<ROOT_NODE>
+    <CHILD_1 />     " Index 1
+    <CHILD_2 />     " Index 2 - Current Handled Child
+    <CHILD_3 />     " Index 3
+</ROOT_NODE>
+````
+
+After ``insert_before( lr_new_node )`` (using current handled node), the result
+will become :
+
+````xml
+<ROOT_NODE>
+    <CHILD_1 />     " Index 1
+    <CHILD_2 />     " Index 2 - Current Handled Child
+    <CHILD_4 />     " Index 3
+    <CHILD_3 />     " Index 3 => 4
+</ROOT_NODE>
+````
+
+* Before ``insert_before``, the sibling is `CHILD_3` with index `3`.
+* After ``insert_before``, the sibling with index `3` is `CHILD_4`.
+
+**Note**: For both methods ``insert_before`` and `insert_after`,
+if there is no current handled child node, the new node will be appended.
 
 
 
@@ -870,7 +914,7 @@ lr_xml->set_root_node( lr_root_node ).
     * ``i_child_node``, type `zcl_xml_lite_node` - _The new child node to append_.
 
 
-#### Add a new child node
+##### Add a new child node
 
 > Insert at the end of the children list the new child node.
 
@@ -938,9 +982,113 @@ DATA(lr_child_node) = lr_parent_node->child( ).
 
 #### ``INSERT_AFTER``
 
+* Import parameter :
+    * ``i_new_node``, type `zcl_xml_lite_node` - _New child node to insert_.
+    * ``i_ref_node``, **optional**, type `zcl_xml_lite_node` - _Sibling child to insert after_.
+    * ``i_index_node``, **optional**, type `I` - _Sibling index child node_.
+
+
+##### Usage 1 - Insert after current handled child node
+
+> Insert the provided new node after the current handled child node
+>
+> If the is not current handled node, the new node will be appended.
+
+````abap
+lr_parent_node->insert_after( lr_new_child_node ) .
+````
+
+
+
+##### Usage 2 - Insert after specified child node
+
+> Insert the provided new node after the child node passed in parameter.
+> The reference node must be a child of the parent node.
+>
+> If the reference node is not a child of the parent node, the new node
+> will be appended.
+
+````abap
+lr_parent_node->insert_after( 
+    i_new_node = lr_new_child_node
+    i_ref_node = lr_ref_child_node
+) .
+````
+
+
+
+##### Usage 3 - Insert after specified child node using it index
+
+> Insert the provided new node after the child node with specified index.
+>
+> If the index is inconsistent (index which do not represents a child),
+> the new node will be appended.
+
+````abap
+lr_parent_node->insert_after( 
+    i_new_node   = lr_new_child_node
+    i_index_node = 3
+) .
+````
+
+
+
+
 
 
 #### ``INSERT_BEFORE``
+
+* Import parameter :
+    * ``i_new_node``, type `zcl_xml_lite_node` - _New child node to insert_.
+    * ``i_ref_node``, **optional**, type `zcl_xml_lite_node` - _Sibling child to insert before_.
+    * ``i_index_node``, **optional**, type `I` - _Sibling index child node_.
+
+
+##### Usage 1 - Insert before current handled child node
+
+> Insert the provided new node before the current handled child node
+>
+> If the is not current handled node, the new node will be appended.
+
+````abap
+lr_parent_node->insert_before( lr_new_child_node ) .
+````
+
+
+
+##### Usage 2 - Insert before specified child node
+
+> Insert the provided new node before the child node passed in parameter.
+> The reference node must be a child of the parent node.
+>
+> If the reference node is not a child of the parent node, the new node
+> will be appended.
+
+````abap
+lr_parent_node->insert_before( 
+    i_new_node = lr_new_child_node
+    i_ref_node = lr_ref_child_node
+) .
+````
+
+
+
+##### Usage 3 - Insert before specified child node using it index
+
+> Insert the provided new node before the child node with specified index.
+>
+> If the index is inconsistent (index which do not represent a child),
+> the new node will be appended.
+
+````abap
+lr_parent_node->insert_before( 
+    i_new_node   = lr_new_child_node
+    i_index_node = 3
+) .
+````
+
+
+
 
 
 
@@ -1309,8 +1457,8 @@ lr_node->set_value( ).
     * [X] SET_VALUE
     * [ ] GET_VALUE
     * [X] APPEND_CHILD
-    * [ ] INSERT_BEFORE
-    * [ ] INSERT_AFTER
+    * [X] INSERT_BEFORE
+    * [X] INSERT_AFTER
     * [ ] REMOVE_CHILD
     * [ ] REMOVE_BEFORE
     * [ ] REMOVE_AFTER
