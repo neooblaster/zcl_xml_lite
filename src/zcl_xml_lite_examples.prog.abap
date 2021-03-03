@@ -11,7 +11,8 @@ REPORT zcl_xml_lite_examples.
               p_dem010 RADIOBUTTON GROUP seld MODIF ID rad                 ,
               p_dem020 RADIOBUTTON GROUP seld MODIF ID rad                 ,
               p_dem030 RADIOBUTTON GROUP seld MODIF ID rad                 ,
-              p_dem040 RADIOBUTTON GROUP seld MODIF ID rad                 .
+              p_dem040 RADIOBUTTON GROUP seld MODIF ID rad                 ,
+              p_dem050 RADIOBUTTON GROUP seld MODIF ID rad                 .
 *              p_dem999 RADIOBUTTON GROUP seld MODIF ID rad                 .
 "SELECTION-SCREEN END   OF BLOCK blkdemo.
 
@@ -182,6 +183,36 @@ IF p_dem040 EQ 'X'.
 
   " Retrieving root node
   lr_root_node040 = lr_xml040->get_root_node( ).
+
+  BREAK-POINT.
+ENDIF.
+
+
+
+*&----------------------------------------------------------------------*
+*&---[ 050 ]----------[  PURPOSE OF THE EXAMPLE  ]----------------------*
+*&----------------------------------------------------------------------*
+*&
+*&  Handling a XML node (Name & Value)
+*&
+*&----------------------------------------------------------------------*
+IF p_dem050 EQ 'X'.
+  BREAK-POINT.
+
+  DATA: lr_xml050       TYPE REF TO zcl_xml_lite      ,
+        lr_root_node050 TYPE REF TO zcl_xml_lite_node .
+
+  " Instanciating class with provided XML will try to parse your XML
+  lr_xml050 = NEW zcl_xml_lite( lv_xml_string ).
+
+  " Retrieving root node
+  lr_root_node050 = lr_xml050->get_root_node( ).
+
+  " Change de root node name
+  lr_root_node050->set_name( 'EDI_IDOC' ).
+
+  " Checking XML from ZCL_XML_LITE
+  cl_abap_browser=>show_xml( lr_xml050->stringify( ) ).
 
   BREAK-POINT.
 ENDIF.

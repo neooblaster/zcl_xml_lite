@@ -40,6 +40,18 @@
      <ENTRY>030: Create root node</ENTRY>
      <LENGTH>29</LENGTH>
     </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_DEM040</KEY>
+     <ENTRY>040: Get root node</ENTRY>
+     <LENGTH>26</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_DEM050</KEY>
+     <ENTRY>050: Set root node name</ENTRY>
+     <LENGTH>31</LENGTH>
+    </item>
    </TPOOL>
   </asx:values>
  </asx:abap>

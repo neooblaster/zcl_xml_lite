@@ -61,24 +61,32 @@ public section.
     importing
       !I_NEW_NODE type ref to ZCL_XML_LITE_NODE
       !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
-      !I_INDEX_NODE type I optional .
+      !I_INDEX_NODE type I optional
+    preferred parameter I_NEW_NODE .
   methods INSERT_AFTER
     importing
       !I_NEW_NODE type ref to ZCL_XML_LITE_NODE
       !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
-      !I_INDEX_NODE type I optional .
+      !I_INDEX_NODE type I optional
+    preferred parameter I_NEW_NODE .
   methods REMOVE_CHILD
     importing
       !I_CHILD_NODE type ref to ZCL_XML_LITE_NODE optional
-      !I_CHILD_NODE_INDEX type I optional .
+      !I_CHILD_NODE_INDEX type I optional
+    preferred parameter I_CHILD_NODE .
+  methods REMOVE_ME .
   methods REMOVE_BEFORE
     importing
       !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
-      !I_INDEX_NODE type I optional .
+      !I_INDEX_NODE type I optional
+    preferred parameter I_REF_NODE .
+  methods REMOVE_PREVIOUS_SIBLING .
   methods REMOVE_AFTER
     importing
       !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
-      !I_INDEX_NODE type I optional .
+      !I_INDEX_NODE type I optional
+    preferred parameter I_REF_NODE .
+  methods REMOVE_NEXT_SIBLING .
   methods CHILDREN
     returning
       value(R_CHILD_LIST) type ZT_XML_LITE_CHILD_LIST .
@@ -88,6 +96,13 @@ public section.
   methods NEXT
     returning
       value(R_CHILD_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods NEXT_CHILD
+    importing
+      !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_INDEX_NODE type I optional
+    preferred parameter I_REF_NODE
+    returning
+      value(R_SIBLING_NODE) type ref to ZCL_XML_LITE_NODE .
   methods NEXT_SIBLING
     importing
       !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
@@ -98,6 +113,13 @@ public section.
   methods PREVIOUS
     returning
       value(R_CHILD_NODE) type ref to ZCL_XML_LITE_NODE .
+  methods PREVIOUS_CHILD
+    importing
+      !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
+      !I_INDEX_NODE type I optional
+    preferred parameter I_REF_NODE
+    returning
+      value(R_SIBLING_NODE) type ref to ZCL_XML_LITE_NODE .
   methods PREVIOUS_SIBLING
     importing
       !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
@@ -412,7 +434,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD next_sibling.
+  method NEXT_CHILD.
 
     DATA : lv_index      TYPE        i                       ,
            ls_child_node TYPE        zst_xml_lite_child_node .
@@ -451,6 +473,15 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
 
     ENDIF.
 
+  endmethod.
+
+
+  METHOD next_sibling.
+
+    IF me->parent( ) IS NOT INITIAL.
+      r_sibling_node = me->parent( )->next_child( i_ref_node = me ).
+    ENDIF.
+
   ENDMETHOD.
 
 
@@ -481,7 +512,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD previous_sibling.
+  method PREVIOUS_CHILD.
 
     DATA : lv_index      TYPE i                       ,
            ls_child_node TYPE zst_xml_lite_child_node .
@@ -516,6 +547,15 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
     ELSE.
       " r_sibling_node = new zcl_xml_lite_node( 'NEW_NODE_NOT_SIBLNG' ).
 
+    ENDIF.
+
+  endmethod.
+
+
+  METHOD previous_sibling.
+
+    IF me->parent( ) IS NOT INITIAL.
+      r_sibling_node = me->parent( )->previous_child( i_ref_node = me ).
     ENDIF.
 
   ENDMETHOD.
@@ -618,6 +658,45 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
     ENDIF.
 
   ENDMETHOD.
+
+
+  method REMOVE_ME.
+
+    IF me->parent( ) IS NOT INITIAL.
+      me->parent( )->remove_child( me ).
+    ENDIF.
+
+  endmethod.
+
+
+  method REMOVE_NEXT_SIBLING.
+
+    DATA: lr_next_node TYPE REF TO zcl_xml_lite_node .
+
+    IF me->parent( ) IS NOT INITIAL.
+      lr_next_node = me->next_sibling( ) .
+
+      IF lr_next_node IS NOT INITIAL.
+        me->parent( )->remove_child( lr_next_node ).
+      ENDIF.
+    ENDIF.
+
+  endmethod.
+
+
+  method REMOVE_PREVIOUS_SIBLING.
+
+    DATA: lr_prev_node TYPE REF TO zcl_xml_lite_node .
+
+    IF me->parent( ) IS NOT INITIAL.
+      lr_prev_node = me->previous_sibling( ) .
+
+      IF lr_prev_node IS NOT INITIAL.
+        me->parent( )->remove_child( lr_prev_node ).
+      ENDIF.
+    ENDIF.
+
+  endmethod.
 
 
   METHOD reset.
