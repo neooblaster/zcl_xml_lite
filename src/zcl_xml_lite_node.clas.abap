@@ -73,20 +73,36 @@ public section.
     importing
       !I_CHILD_NODE type ref to ZCL_XML_LITE_NODE optional
       !I_CHILD_NODE_INDEX type I optional
-    preferred parameter I_CHILD_NODE .
-  methods REMOVE_ME .
+    preferred parameter I_CHILD_NODE
+    returning
+      value(R_RET_CODE) type I .
+  methods REMOVE_ME
+    returning
+      value(R_RET_CODE) type I .
   methods REMOVE_BEFORE
     importing
       !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
       !I_INDEX_NODE type I optional
-    preferred parameter I_REF_NODE .
-  methods REMOVE_PREVIOUS_SIBLING .
+    preferred parameter I_REF_NODE
+    returning
+      value(R_RET_CODE) type I .
+  methods REMOVE_PREVIOUS_SIBLING
+    returning
+      value(R_RET_CODE) type I
+    exceptions
+      PARENT_NODE_UNDEFINED .
   methods REMOVE_AFTER
     importing
       !I_REF_NODE type ref to ZCL_XML_LITE_NODE optional
       !I_INDEX_NODE type I optional
-    preferred parameter I_REF_NODE .
-  methods REMOVE_NEXT_SIBLING .
+    preferred parameter I_REF_NODE
+    returning
+      value(R_RET_CODE) type I .
+  methods REMOVE_NEXT_SIBLING
+    returning
+      value(R_RET_CODE) type I
+    exceptions
+      PARENT_NODE_UNDEFINED .
   methods CHILDREN
     returning
       value(R_CHILD_LIST) type ZT_XML_LITE_CHILD_LIST .
@@ -583,7 +599,7 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
     " Remove child after index
     lv_index = lv_index + 1.
 
-    me->remove_child( i_child_node_index = lv_index ).
+    r_ret_code = me->remove_child( i_child_node_index = lv_index ).
 
   ENDMETHOD.
 
@@ -617,7 +633,8 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
     " Remove child before index
     lv_index = lv_index - 1.
 
-    me->remove_child( i_child_node_index = lv_index ).
+    " Remove only if the node exist
+    r_ret_code = me->remove_child( i_child_node_index = lv_index ).
 
   ENDMETHOD.
 
@@ -635,26 +652,26 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
       lv_index = me->_get_index(  ).
     ENDIF.
 
+    " Index can not be null, so remove only if it's a valid index
+    IF lv_index GT 0 AND lv_index LE me->length( ).
+      " Remove child
+      DELETE me->_children INDEX lv_index.
 
-    " Index can not be null, so remove last child
-    IF lv_index EQ 0 OR lv_index > me->length( ).
-      lv_index = me->length( ).
-    ENDIF.
-
-
-    " Remove child
-    DELETE me->_children INDEX lv_index.
-
-    IF sy-subrc EQ 0.
-      " If current handled child has been removed
-      " Handle previous one for 'next()' method
-      " (most common method used vs 'previous()'
-      " Or if current handled child was next one
-      " We have to update the current handle
-      IF lv_index <= me->_children_idx.
-        me->_children_idx = me->_children_idx - 1.
+      IF sy-subrc EQ 0.
+        " If current handled child has been removed
+        " Handle previous one for 'next()' method
+        " (most common method used vs 'previous()')
+        " Or if current handled child was next one
+        " We have to update the current handle
+        IF lv_index <= me->_children_idx.
+          me->_children_idx = me->_children_idx - 1.
+        ENDIF.
+        me->_children_len = _children_len - 1.
+      ELSE.
+        r_ret_code = 1.
       ENDIF.
-      me->_children_len = _children_len - 1.
+    ELSE.
+      r_ret_code = 1.
     ENDIF.
 
   ENDMETHOD.
@@ -663,7 +680,9 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
   method REMOVE_ME.
 
     IF me->parent( ) IS NOT INITIAL.
-      me->parent( )->remove_child( me ).
+      r_ret_code = me->parent( )->remove_child( me ).
+    ELSE.
+      r_ret_code = 1.
     ENDIF.
 
   endmethod.
@@ -677,8 +696,11 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
       lr_next_node = me->next_sibling( ) .
 
       IF lr_next_node IS NOT INITIAL.
-        me->parent( )->remove_child( lr_next_node ).
+        r_ret_code = me->parent( )->remove_child( lr_next_node ).
       ENDIF.
+
+    ELSE.
+      r_ret_code = 1.
     ENDIF.
 
   endmethod.
@@ -692,8 +714,11 @@ CLASS ZCL_XML_LITE_NODE IMPLEMENTATION.
       lr_prev_node = me->previous_sibling( ) .
 
       IF lr_prev_node IS NOT INITIAL.
-        me->parent( )->remove_child( lr_prev_node ).
+        r_ret_code = me->parent( )->remove_child( lr_prev_node ).
       ENDIF.
+
+    ELSE.
+      r_ret_code = 1.
     ENDIF.
 
   endmethod.
