@@ -1,10 +1,10 @@
-**# zcl_xml_lite - Version 0.1.0
+# zcl_xml_lite - Version 0.1.0
 
 > Documentation is still in WIP status.
 >
 > English mistakes will be fixed at the end (as possible)
 
-A very basic class to handle XML nodes &amp;
+A **very basic** class to handle XML nodes &amp;
 attributes in a better way than **ixml** &amp; **sxml**.
 
 **Important** : ``ZCL_XML_LITE`` do not handle nodes which have a
@@ -39,7 +39,11 @@ attributes in a better way than **ixml** &amp; **sxml**.
         * [Appending a new child node](#appending-a-new-child-node)
         * [Inserting before an another child node](#inserting-before-an-another-child-node)
         * [Inserting after an another child node.](#inserting-after-an-another-child-node.)
-    * [Removing node](#removing-node)
+    * [Removing a node](#removing-a-node)
+        * [Remove a child node](#remove-a-child-node)
+            * [Remove the child directly](#remove-the-child-directly)
+            * [Remove the child indirectly](#remove-the-child-indirectly)
+        * [Remove a sibling node](#remove-a-sibling-node)
     * [Handling node attributes](#handling-node-attributes)
 * [Advanced functionality](#advanced-functionality)
 * [Detailed Documentation](#detailed-documentation)
@@ -106,9 +110,24 @@ attributes in a better way than **ixml** &amp; **sxml**.
         * [``PREVIOUS_SIBLING``](#previous_sibling)
             * [Get previous sibling of the node](#get-previous-sibling-of-the-node)
         * [``REMOVE_AFTER``](#remove_after)
+            * [Usage 1 - Remove child node after current handled child node](#usage-1---remove-child-node-after-current-handled-child-node)
+            * [Usage 2 - Remove child node after the provided node reference](#usage-2---remove-child-node-after-the-provided-node-reference)
+            * [Usage 3 - Remove child node after the child with provided index](#usage-3---remove-child-node-after-the-child-with-provided-index)
         * [``REMOVE_ATTRIBUTE``](#remove_attribute)
         * [``REMOVE_BEFORE``](#remove_before)
+            * [Usage 1 - Remove child node before current handled child node](#usage-1---remove-child-node-before-current-handled-child-node)
+            * [Usage 2 - Remove child node before the provided node reference](#usage-2---remove-child-node-before-the-provided-node-reference)
+            * [Usage 3 - Remove child node before the child with provided index](#usage-3---remove-child-node-before-the-child-with-provided-index)
         * [``REMOVE_CHILD``](#remove_child)
+            * [Usage 1 - Remove the current handled child node](#usage-1---remove-the-current-handled-child-node)
+            * [Usage 2 - Remove a child node using a reference](#usage-2---remove-a-child-node-using-a-reference)
+            * [Usage 3 - Remove a child node using its index](#usage-3---remove-a-child-node-using-its-index)
+        * [``REMOVE_ME``](#remove_me)
+            * [Self removing from its own parent node](#self-removing-from-its-own-parent-node)
+        * [``REMOVE_NEXT_SIBLING``](#remove_next_sibling)
+            * [Remove its own next sibling](#remove-its-own-next-sibling)
+        * [``REMOVE_PREVIOUS_SIBLING``](#remove_previous_sibling)
+            * [Remove its own previous sibling](#remove-its-own-previous-sibling)
         * [``RESET``](#reset)
             * [Reset the index to the beginning](#reset-the-index-to-the-beginning)
             * [Set index to the end](#set-index-to-the-end)
@@ -734,7 +753,165 @@ if there is no current handled child node, the new node will be appended.
 
 
 
-### Removing node
+### Removing a node
+
+The ``zcl_xml_lite_node`` offers many way to remove a child node :
+
+* From itself (`me`).
+* From a parent node.
+* Remove a node sibling.
+
+The easiest way to remove a node is to call the method ``remove_me( )``
+from the node we want to remove.
+
+This method requires that its **parent node** is defined.
+
+The parent node is defined by default, during XML parsing or when a node is 
+added as children.
+
+**Important** : Removing a node only delete the link between the parent node and the
+child node. The object reference is not cleared letting you to continue to handle
+it to append it in another node or to reuse it for later use (or clone).
+So keep in mind to not use ``IS INITIAL`` on your reference to check if remove 
+operation has done successfully.
+
+**Note** : All remove methods return ``0`` if action is done successfully and
+``1`` if something happens wrong letting you to make controls :
+
+````abap
+IF lr_parent_node->remove_child( ) NE 0.
+    MESSAGE e123(zclass).
+ENDIF.
+````
+
+
+
+
+#### Remove a child node
+
+There is two ways to remove a child node from a parent node :
+* Remove the current handled child or a specified child using a reference or an index.
+* Remove the child before or after the current handed node of from the specified one.
+
+
+
+##### Remove the child directly
+
+To remove the desired node from the parent, simply call the method as follows :
+
+````abap
+" Your node refernce
+lr_parent_node->remove_child( lr_child_node ).
+
+" Current Handled Node
+lr_parent_node->remove_child( ).
+````
+
+* **If method called without a import parameter,
+that will remove the current handled node.**
+* **If there is no current handled node,
+nothing will be removed.**
+* **If your reference node is invalid, nothing will be removed.**
+
+You can also ask to remove your node by specifying its index :
+
+````abap
+lr_parent_node->remove_child( i_child_node_index = 3 ).
+````
+
+* **If you provide an invalid child index, nothing will be removed.**
+
+
+
+##### Remove the child indirectly
+
+If you want to remove a sibling node of your reference (or index),
+you can use ``remove_before( )`` or `remove_after( )`.
+
+As ``remove_child( )``, calling these methods without import parameter,
+the current handled child node is used :
+
+````xml
+<ROOT_NODE>
+    <CHILD_1 />     " Index 1
+    <CHILD_2 />     " Index 2 
+    <CHILD_3 />     " Index 3 - Current Handled Child
+    <CHILD_4 />     " Index 4
+    <CHILD_4 />     " Index 5
+</ROOT_NODE>
+````
+
+These three statements will remove ``CHILD_2`` (if called independently) :
+
+````abap
+" Current Handled Node used
+lr_root_node->remove_before( ).
+
+" Reference node
+lr_root_node->remove_before( lr_child_3 ).
+
+" Index Node
+lr_root_node->remove_before ( i_index_node = 3 ).
+````
+
+These three statements will remove ``CHILD_4`` (if called independently) :
+
+````abap
+" Current Handled Node used
+lr_root_node->remove_after( ).
+
+" Reference node
+lr_root_node->remove_after( lr_child_3 ).
+
+" Index Node
+lr_root_node->remove_after ( i_index_node = 3 ).
+````
+
+**Important** : If there is no child node **before** or **after**,
+nothing is removed.
+
+
+
+
+
+
+#### Remove a sibling node
+
+Removing the sibling node is only available if the node has its parent node
+defined, which must be the case by default. The parent node is set when
+you append/insert the new node.
+
+You can easily remove a directly sibling from a child node without using the 
+parent node thanks to methods ``remove_previous_sibling( )`` and
+``remove_next_sibling( )``.
+
+````xml
+<ROOT_NODE>
+    <CHILD_1 />     " Index 1
+    <CHILD_2 />     " Index 2 
+    <CHILD_3 />     " Index 3 - Current Handled Child
+    <CHILD_4 />     " Index 4
+    <CHILD_4 />     " Index 5
+</ROOT_NODE>
+````
+
+This statement will remove ``CHILD_2`` : 
+
+````abap
+lr_child_3->remove_previous_sibling( ).
+````
+
+This statement will remove ``CHILD_4`` : 
+
+````abap
+lr_child_3->remove_next_sibling( ).
+````
+
+* **Important** : If your reference node do not have the requested sibling
+(**previous** or **next**), nothing is removed.
+
+
+
 
 
 
@@ -906,6 +1083,12 @@ lr_xml->set_root_node( lr_root_node ).
 
 #### ``CONSTRUCTOR``
 
+* Import parameter :
+    * ``i_node_name``, **optional**, type `string`, default `NODE` - _The node name_.
+    * ``i_parent_node``, **optional**, type `zcl_xml_lite_node` - _The parent node_.
+* Returning parameter :
+    * The created instance of ``zcl_xml_lite``.
+
 
 
 #### ``APPEND_CHILD``
@@ -983,7 +1166,7 @@ DATA(lr_child_node) = lr_parent_node->child( ).
 #### ``INSERT_AFTER``
 
 * Import parameter :
-    * ``i_new_node``, type `zcl_xml_lite_node` - _New child node to insert_.
+    * ``i_new_node``, **preferred**, type `zcl_xml_lite_node` - _New child node to insert_.
     * ``i_ref_node``, **optional**, type `zcl_xml_lite_node` - _Sibling child to insert after_.
     * ``i_index_node``, **optional**, type `I` - _Sibling index child node_.
 
@@ -1039,7 +1222,7 @@ lr_parent_node->insert_after(
 #### ``INSERT_BEFORE``
 
 * Import parameter :
-    * ``i_new_node``, type `zcl_xml_lite_node` - _New child node to insert_.
+    * ``i_new_node``, **preferred**, type `zcl_xml_lite_node` - _New child node to insert_.
     * ``i_ref_node``, **optional**, type `zcl_xml_lite_node` - _Sibling child to insert before_.
     * ``i_index_node``, **optional**, type `I` - _Sibling index child node_.
 
@@ -1266,7 +1449,59 @@ DATA(lr_sibling) = lr_node->previous_sibling( ).
 
 
 
+
+
+
 #### ``REMOVE_AFTER``
+
+* Import parameter :
+    * ``i_ref_node``, **optional**, **preferred**, type `zcl_xml_lite_node` - _Reference node_.
+    * ``i_index_node``, **optional**, type `I` - _Child node index_.
+* Returning parameter :
+    * ``r_ret_code``, type `I` - _Indicates if removing has been done successfully_:
+        * ``0``, default value, if operation is done successfully.
+        * ``1`` if something happens wrong.
+
+
+##### Usage 1 - Remove child node after current handled child node
+
+> From a parent node, remove the child node which is after the current 
+> handled node.
+>
+> **If there is no node after your reference node, nothing is removed.**
+
+````abap
+lr_parent_node->remove_after( ).
+````
+
+
+
+##### Usage 2 - Remove child node after the provided node reference
+
+> From a parent node, remove the child node which is after the provided
+> reference node.
+>
+> **If there is no node after your reference node, nothing is removed.**
+
+````abap
+lr_parent_node->remove_after( lr_child_node ).
+````
+
+
+
+##### Usage 3 - Remove child node after the child with provided index
+
+> From a parent node, remove the child node which is after the provided
+> reference node using it index.
+>
+> **If there is no node after your reference node, nothing is removed.**
+
+````abap
+lr_parent_node->remove_after( i_index_node = 3 ).
+````
+
+
+
 
 
 
@@ -1276,9 +1511,197 @@ DATA(lr_sibling) = lr_node->previous_sibling( ).
 
 #### ``REMOVE_BEFORE``
 
+* Import parameter :
+    * ``i_ref_node``, **optional**, **preferred**, type `zcl_xml_lite_node` - _Reference node_.
+    * ``i_index_node``, **optional**, type `I` - _Child node index_.
+* Returning parameter :
+    * ``r_ret_code``, type `I` - _Indicates if removing has been done successfully_ :
+        * ``0``, default value, if operation is done successfully.
+        * ``1`` if something happens wrong.
+
+
+##### Usage 1 - Remove child node before current handled child node
+
+> From a parent node, remove the child node which is before the current 
+> handled node.
+>
+> **If there is no node before your reference node, nothing is removed.**
+
+````abap
+lr_parent_node->remove_before( ).
+````
+
+
+
+##### Usage 2 - Remove child node before the provided node reference
+
+> From a parent node, remove the child node which is before the provided
+> reference node.
+>
+> **If there is no node before your reference node, nothing is removed.**
+
+````abap
+lr_parent_node->remove_before( lr_child_node ).
+````
+
+
+
+##### Usage 3 - Remove child node before the child with provided index
+
+> From a parent node, remove the child node which is before the provided
+> reference node using it index.
+>
+> **If there is no node before your reference node, nothing is removed.**
+
+````abap
+lr_parent_node->remove_before( i_index_node = 3 ).
+````
+
 
 
 #### ``REMOVE_CHILD``
+
+* Import parameter :
+    * ``i_child_node``, **optional**, **preferred**, type `zcl_xml_lite_node` - _Reference node to remove_.
+    * ``i_index_node``, **optional**, type `I` - _Child node index in children list_.
+* Returning parameter :
+    * ``r_ret_code``, type `I` - _Indicates if removing has been done successfully_:
+        * ``0``, default value, if operation is done successfully. 
+        * ``1`` if something happens wrong.
+
+
+
+##### Usage 1 - Remove the current handled child node
+
+> From a parent node, remove the child node which is currently handed
+> (cf `child( )`).
+>
+> **If there is no node currently handled, nothing is removed, returning `1`.**
+
+````abap
+lr_parent_node->remove_child( ).
+````
+
+
+
+##### Usage 2 - Remove a child node using a reference
+
+> From a parent node, remove the child node which is passed using a reference.
+>
+> **If the reference node is not a child of the parent, nothing is removed,
+>returning `1`.**
+
+````abap
+lr_parent_node->remove_child( lr_child_node ).
+````
+
+
+
+##### Usage 3 - Remove a child node using its index
+
+> From a parent node, remove the child node which corresponding to the provided
+> index.
+>
+> **If the index is invalid, nothing is removed, returning `1`.**
+
+````abap
+lr_parent_node->remove_child( i_index_node = 3 ).
+````
+
+
+
+
+
+
+#### ``REMOVE_ME``
+
+* Returning parameter :
+    * ``r_ret_code``, type `I` - _Indicates if removing has been done successfully_:
+        * ``0``, default value, if operation is done successfully. 
+        * ``1`` if something happens wrong.
+        
+
+##### Self removing from its own parent node
+
+> From a child node, remove the link between the node and its own parent node.
+>
+> The parent node must be defined to perform the action.
+> The definition of the parent node is made during XML parsing or when you
+> add a new node.
+>
+> If the parent node is not set, nothing is done and returns ``1``.
+
+````abap
+lr_node->remove_me( ).
+
+" Which is equal to
+lr_parent_node->remove_child( lr_node ).
+" or
+lr_node->parent( )->remove_child( lr_node ).
+````
+
+
+
+
+
+
+#### ``REMOVE_NEXT_SIBLING``
+
+* Returning parameter :
+    * ``r_ret_code``, type `I` - _Indicates if removing has been done successfully_:
+        * ``0``, default value, if operation is done successfully. 
+        * ``1`` if something happens wrong.
+        
+
+##### Remove its own next sibling
+
+> From a child node, remove the link between the its own next sibling node and
+> its own parent node.
+>
+> The parent node must be defined to perform the action.
+> The definition of the parent node is made during XML parsing or when you
+> add a new node.
+>
+> If the parent node is not set, nothing is done and returns ``1``.
+
+````abap
+lr_node->remove_next_sibling( ).
+
+" Which is equal to
+lr_parent_node->remove_after( lr_node ).
+````
+
+
+
+#### ``REMOVE_PREVIOUS_SIBLING``
+
+* Returning parameter :
+    * ``r_ret_code``, type `I` - _Indicates if removing has been done successfully_:
+        * ``0``, default value, if operation is done successfully. 
+        * ``1`` if something happens wrong.
+        
+
+##### Remove its own previous sibling
+
+> From a child node, remove the link between the its own previous sibling node and
+> its own parent node.
+>
+> The parent node must be defined to perform the action.
+> The definition of the parent node is made during XML parsing or when you
+> add a new node.
+>
+> If the parent node is not set, nothing is done and returns ``1``.
+
+````abap
+lr_node->remove_previous_sibling( ).
+
+" Which is equal to
+lr_parent_node->remove_before( lr_node ).
+````
+
+
+
+
 
 
 
@@ -1459,9 +1882,12 @@ lr_node->set_value( ).
     * [X] APPEND_CHILD
     * [X] INSERT_BEFORE
     * [X] INSERT_AFTER
-    * [ ] REMOVE_CHILD
-    * [ ] REMOVE_BEFORE
-    * [ ] REMOVE_AFTER
+    * [X] REMOVE_CHILD
+    * [X] REMOVE_BEFORE
+    * [X] REMOVE_AFTER
+    * [X] REMOVE_ME
+    * [X] REMOVE_PREVIOUS_SIBLING
+    * [X] REMOVE_NEXT_SIBLING
     * [ ] CHILDREN
     * [ ] LENGTH
     * [X] NEXT
@@ -1486,7 +1912,7 @@ lr_node->set_value( ).
 Documentation sample :
 
 * Import parameter :
-    * ``i_``, **optional**, type ` ` - _desc_.
+    * ``i_``, **optional**, **preferred**, type ` `, default `NODE` - _desc_.
 * Exporting parameter :
     * ``e_``, type ` ` - _desc_.
 * Returning parameter :
